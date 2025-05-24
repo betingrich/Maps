@@ -3,22 +3,31 @@ import { formatEnvVars } from '../../utils/helpers';
 
 // In your deployment handler:
 const handleDeploy = async (values) => {
-  // Validate session first
-  const sessionValidation = await validateSession(values.SESSION_ID);
-  if (!sessionValidation.valid) {
-    throw new Error(sessionValidation.message || 'Invalid session ID');
-  }
-
-  // Validate the full configuration
-  const configValidation = await validateBotConfig(values);
-  if (!configValidation.valid) {
-    // Handle validation errors
-    const errorMessages = Object.values(configValidation.errors).join('\n');
-    throw new Error(`Configuration errors:\n${errorMessages}`);
-  }
-
-  // Sanitize the configuration before deployment
-  const sanitizedConfig = sanitizeConfig(values);
+  setIsDeploying(true);
   
-  // Proceed with deployment...
+  try {
+    const response = await fetch('/api/deploy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        botId,
+        ...values
+      }),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      setDeploymentId(data.id);
+      router.push(`/deployment/${data.id}`);
+    } else {
+      throw new Error(data.message || 'Deployment failed');
+    }
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    setIsDeploying(false);
+  }
 };
