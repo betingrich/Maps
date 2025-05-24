@@ -1,22 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  serverRuntimeConfig: {
-    PROJECT_ROOT: __dirname,
-  },
-  async headers() {
-    return [
-      {
-        source: '/api/logs/:id',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'text/plain',
-          },
-        ],
-      },
-    ];
-  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        fs: false,
+        path: false,
+        child_process: false
+      };
+    }
+    return config;
+  }
 };
 
 module.exports = nextConfig;
