@@ -6,7 +6,8 @@ const nextConfig = {
       config.resolve.fallback = {
         fs: false,
         path: false,
-        child_process: false
+        child_process: false,
+        net: false
       };
     }
     return config;
