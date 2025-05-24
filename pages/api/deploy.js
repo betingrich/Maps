@@ -1,5 +1,5 @@
-import { createDeployment } from '../../lib/deployment';
-import { getBotById } from '../../lib/bots';
+import { deploymentFunctions } from '../../lib/deployment';
+import { serverHelpers } from '../../utils/helpers';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -9,14 +9,11 @@ export default async function handler(req, res) {
   try {
     const { botId, ...config } = req.body;
     
-    // Validate bot exists
-    const bot = getBotById(botId);
-    if (!bot) {
-      return res.status(400).json({ message: 'Invalid bot ID' });
-    }
+    // In production, you would use serverHelpers here:
+    // const deploymentDir = await serverHelpers.createDeploymentDir(process.env.DEPLOYMENTS_DIR, deploymentId);
+    // await serverHelpers.executeCommand(`git clone ${repoUrl} ${deploymentDir}`);
     
-    // Create deployment
-    const deployment = await createDeployment(botId, config);
+    const deployment = await deploymentFunctions.createDeployment(botId, config);
     
     res.status(200).json({
       id: deployment.id,
