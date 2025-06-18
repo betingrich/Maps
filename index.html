@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marisel AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
         
@@ -14,6 +15,8 @@
             --text-light: #f8fafc;
             --text-dark: #1e293b;
             --time-color: #94a3b8;
+            --icon-color: #64748b;
+            --icon-hover: #3b82f6;
         }
         
         * {
@@ -36,8 +39,14 @@
             padding: 15px 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             border-bottom: 1px solid #334155;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .logo {
@@ -50,6 +59,19 @@
             justify-content: center;
             font-weight: bold;
             color: white;
+        }
+        
+        .channel-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .channel-btn:hover {
+            color: var(--user-bubble);
         }
         
         .chat-container {
@@ -91,6 +113,30 @@
             text-align: right;
         }
         
+        .ai-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--user-bubble);
+        }
+        
+        .action-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            padding-left: 5px;
+        }
+        
+        .action-icon {
+            color: var(--icon-color);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .action-icon:hover {
+            color: var(--icon-hover);
+        }
+        
         .input-container {
             display: flex;
             padding: 15px;
@@ -100,7 +146,7 @@
         
         #user-input {
             flex: 1;
-            padding: 12px 15px;
+            padding: 12px 20px;
             border: none;
             border-radius: 24px;
             outline: none;
@@ -117,12 +163,16 @@
             background-color: var(--user-bubble);
             color: white;
             border: none;
-            border-radius: 24px;
-            padding: 0 20px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             margin-left: 10px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #send-button:hover {
@@ -167,23 +217,43 @@
             30% { transform: translateY(-3px); }
         }
         
-        .ai-name {
-            font-weight: 500;
-            margin-bottom: 4px;
-            color: var(--user-bubble);
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .message {
+                max-width: 90%;
+            }
+            
+            #user-input {
+                padding: 10px 16px;
+            }
+            
+            .header {
+                padding: 12px 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">M</div>
-        <h2>Marisel AI</h2>
+        <div class="header-left">
+            <div class="logo">M</div>
+            <h2>Marisel AI</h2>
+        </div>
+        <button class="channel-btn" id="channel-btn">
+            <i class="fab fa-youtube"></i>
+        </button>
     </div>
     
     <div class="chat-container" id="chat-container">
         <div class="message ai-message">
             <div class="ai-name">Marisel AI</div>
             Hello! I'm Marisel AI, your advanced conversational assistant. How can I help you today?
+            <div class="action-icons">
+                <i class="fas fa-copy action-icon" title="Copy"></i>
+                <i class="fas fa-sync-alt action-icon" title="Regenerate"></i>
+                <i class="far fa-thumbs-up action-icon" title="Like"></i>
+                <i class="far fa-thumbs-down action-icon" title="Dislike"></i>
+            </div>
             <div class="message-time" id="current-time"></div>
         </div>
         
@@ -198,7 +268,9 @@
     
     <div class="input-container">
         <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
-        <button id="send-button">Send</button>
+        <button id="send-button">
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
 
     <script>
@@ -207,6 +279,12 @@
             const userInput = document.getElementById('user-input');
             const sendButton = document.getElementById('send-button');
             const typingIndicator = document.getElementById('typing-indicator');
+            const channelBtn = document.getElementById('channel-btn');
+            
+            // Channel link - replace with your actual channel URL
+            channelBtn.addEventListener('click', function() {
+                window.open('https://youtube.com/yourchannel', '_blank');
+            });
             
             // Function to get current time in HH:MM AM/PM format
             function getCurrentTime() {
@@ -237,6 +315,51 @@
                 const messageText = document.createElement('div');
                 messageText.textContent = text;
                 messageDiv.appendChild(messageText);
+                
+                if (!isUser) {
+                    const actionIcons = document.createElement('div');
+                    actionIcons.className = 'action-icons';
+                    actionIcons.innerHTML = `
+                        <i class="fas fa-copy action-icon" title="Copy"></i>
+                        <i class="fas fa-sync-alt action-icon" title="Regenerate"></i>
+                        <i class="far fa-thumbs-up action-icon" title="Like"></i>
+                        <i class="far fa-thumbs-down action-icon" title="Dislike"></i>
+                    `;
+                    messageDiv.appendChild(actionIcons);
+                    
+                    // Add click handlers for action icons
+                    const copyIcon = actionIcons.querySelector('.fa-copy');
+                    const regenerateIcon = actionIcons.querySelector('.fa-sync-alt');
+                    const likeIcon = actionIcons.querySelector('.fa-thumbs-up');
+                    const dislikeIcon = actionIcons.querySelector('.fa-thumbs-down');
+                    
+                    copyIcon.addEventListener('click', function() {
+                        navigator.clipboard.writeText(text);
+                        this.style.color = 'var(--icon-hover)';
+                        setTimeout(() => {
+                            this.style.color = 'var(--icon-color)';
+                        }, 1000);
+                    });
+                    
+                    regenerateIcon.addEventListener('click', async function() {
+                        this.style.color = 'var(--icon-hover)';
+                        const aiResponse = await getAIResponse(userInput.value.trim());
+                        messageText.textContent = aiResponse;
+                        setTimeout(() => {
+                            this.style.color = 'var(--icon-color)';
+                        }, 1000);
+                    });
+                    
+                    likeIcon.addEventListener('click', function() {
+                        this.style.color = this.style.color === 'var(--icon-hover)' ? 
+                            'var(--icon-color)' : 'var(--icon-hover)';
+                    });
+                    
+                    dislikeIcon.addEventListener('click', function() {
+                        this.style.color = this.style.color === 'var(--icon-hover)' ? 
+                            'var(--icon-color)' : 'var(--icon-hover)';
+                    });
+                }
                 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'message-time';
