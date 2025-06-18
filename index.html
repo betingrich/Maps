@@ -17,6 +17,7 @@
             --time-color: #94a3b8;
             --icon-color: #64748b;
             --icon-hover: #3b82f6;
+            --input-bg: #1e293b;
         }
         
         * {
@@ -61,6 +62,11 @@
             color: white;
         }
         
+        .channel-btns {
+            display: flex;
+            gap: 15px;
+        }
+        
         .channel-btn {
             background: none;
             border: none;
@@ -71,7 +77,15 @@
         }
         
         .channel-btn:hover {
-            color: var(--user-bubble);
+            transform: scale(1.1);
+        }
+        
+        .yt-btn:hover {
+            color: #FF0000;
+        }
+        
+        .wa-btn:hover {
+            color: #25D366;
         }
         
         .chat-container {
@@ -139,20 +153,35 @@
         
         .input-container {
             display: flex;
-            padding: 15px;
+            align-items: flex-end;
+            padding: 10px 15px;
             background-color: var(--ai-bubble);
             border-top: 1px solid #334155;
         }
         
-        #user-input {
+        .input-wrapper {
             flex: 1;
-            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            background-color: var(--input-bg);
+            border-radius: 21px;
+            padding: 5px 15px;
+            min-height: 42px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        #user-input {
+            width: 100%;
             border: none;
-            border-radius: 24px;
             outline: none;
             font-size: 14px;
-            background-color: #1e293b;
+            background: transparent;
             color: white;
+            resize: none;
+            max-height: 100px;
+            padding: 8px 0;
+            line-height: 1.4;
         }
         
         #user-input::placeholder {
@@ -173,10 +202,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         
         #send-button:hover {
             opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        #send-button:disabled {
+            background-color: #64748b;
+            cursor: not-allowed;
         }
         
         .typing-indicator {
@@ -223,12 +259,12 @@
                 max-width: 90%;
             }
             
-            #user-input {
-                padding: 10px 16px;
-            }
-            
             .header {
                 padding: 12px 15px;
+            }
+            
+            .channel-btns {
+                gap: 12px;
             }
         }
     </style>
@@ -238,10 +274,16 @@
         <div class="header-left">
             <div class="logo">M</div>
             <h2>Marisel AI</h2>
+            <i class="fas fa-check-circle verified-icon"></i>
         </div>
-        <button class="channel-btn" id="channel-btn">
-            <i class="fab fa-youtube"></i>
-        </button>
+        <div class="channel-btns">
+            <button class="channel-btn wa-btn" id="whatsapp-btn">
+                <i class="fab fa-whatsapp"></i>
+            </button>
+            <button class="channel-btn yt-btn" id="youtube-btn">
+                <i class="fab fa-youtube"></i>
+            </button>
+        </div>
     </div>
     
     <div class="chat-container" id="chat-container">
@@ -267,7 +309,9 @@
     </div>
     
     <div class="input-container">
-        <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+        <div class="input-wrapper">
+            <textarea id="user-input" placeholder="Type your message here..." rows="1"></textarea>
+        </div>
         <button id="send-button">
             <i class="fas fa-paper-plane"></i>
         </button>
@@ -279,11 +323,25 @@
             const userInput = document.getElementById('user-input');
             const sendButton = document.getElementById('send-button');
             const typingIndicator = document.getElementById('typing-indicator');
-            const channelBtn = document.getElementById('channel-btn');
+            const youtubeBtn = document.getElementById('youtube-btn');
+            const whatsappBtn = document.getElementById('whatsapp-btn');
             
-            // Channel link - replace with your actual channel URL
-            channelBtn.addEventListener('click', function() {
-                window.open('https://youtube.com/yourchannel', '_blank');
+            // Channel links
+            youtubeBtn.addEventListener('click', function() {
+                window.open('https://youtube.com/@wemacomic', '_blank');
+            });
+            
+            whatsappBtn.addEventListener('click', function() {
+                window.open('https://whatsapp.com/channel/0029Vajvy2kEwEjwAKP4SI0x', '_blank');
+            });
+            
+            // Auto-resize textarea
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                
+                // Disable send button if empty
+                sendButton.disabled = this.value.trim() === '';
             });
             
             // Function to get current time in HH:MM AM/PM format
@@ -399,19 +457,24 @@
                 if (question) {
                     addMessage(question, true);
                     userInput.value = '';
+                    userInput.style.height = 'auto';
+                    sendButton.disabled = true;
                     
                     const aiResponse = await getAIResponse(question);
                     addMessage(aiResponse, false);
                 }
             });
             
-            // Handle Enter key press
-            userInput.addEventListener('keypress', async function(e) {
-                if (e.key === 'Enter') {
+            // Handle Enter key press (Shift+Enter for new line)
+            userInput.addEventListener('keydown', async function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
                     const question = userInput.value.trim();
                     if (question) {
                         addMessage(question, true);
                         userInput.value = '';
+                        userInput.style.height = 'auto';
+                        sendButton.disabled = true;
                         
                         const aiResponse = await getAIResponse(question);
                         addMessage(aiResponse, false);
@@ -424,4 +487,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
