@@ -372,6 +372,14 @@
                         <i class="fas fa-gem"></i>
                         <span>Gemma</span>
                     </div>
+                    <div class="model-option" data-model="deepimg">
+                        <i class="fas fa-image"></i>
+                        <span>Deep Image</span>
+                    </div>
+                    <div class="model-option" data-model="fluximg">
+                        <i class="fas fa-magic"></i>
+                        <span>Flux Image</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -379,9 +387,9 @@
     
     <div class="chat-container" id="chat-container">
         <div class="message ai-message">
-            <div class="message-title">Marisel AI Response</div>
+            <div class="message-title">Welcome to Marisel AI Pro</div>
             <div class="message-content">
-                Hello! I'm Marisel AI. Ask me for code examples, and I'll provide:
+                Hello! I'm your advanced AI assistant. Ask me for code examples, and I'll provide:
                 - Clean, copyable code blocks
                 - "Open in Browser" options for localhost links
                 - Clear explanations
@@ -413,15 +421,17 @@
             const sendBtn = document.getElementById('send-btn');
             const typingIndicator = document.getElementById('typing-indicator');
             
+            // Current state
+            let selectedModel = 'gpt4o';
+            let isDarkTheme = true;
+            
             // Theme toggle
             themeToggle.addEventListener('click', function() {
                 document.body.classList.toggle('light-theme');
+                isDarkTheme = !isDarkTheme;
                 const icon = this.querySelector('i');
-                if (document.body.classList.contains('light-theme')) {
-                    icon.classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    icon.classList.replace('fa-sun', 'fa-moon');
-                }
+                icon.classList.toggle('fa-moon');
+                icon.classList.toggle('fa-sun');
             });
             
             // Model selection
@@ -471,9 +481,11 @@
                                 <button class="code-action copy-code">
                                     <i class="far fa-copy"></i> Copy
                                 </button>
-                                <button class="code-action open-browser" style="display: none;">
+                                ${code.includes('localhost') ? `
+                                <button class="code-action open-browser">
                                     <i class="fas fa-external-link-alt"></i> Open
                                 </button>
+                                ` : ''}
                             </div>
                             ${code.trim()}
                         </pre>
@@ -536,7 +548,7 @@
                 
                 const messageModel = document.createElement('div');
                 messageModel.className = 'message-model';
-                messageModel.textContent = isUser ? 'You' : currentModel.textContent;
+                messageModel.textContent = isUser ? 'You' : selectedModel;
                 
                 messageFooter.appendChild(messageTime);
                 messageFooter.appendChild(messageModel);
@@ -561,10 +573,82 @@
                     btn.addEventListener('click', function() {
                         const url = this.closest('.link-container') ? 
                             this.closest('.link-container').querySelector('a').href : 
-                            'http://localhost:3000'; // Default port for code examples
+                            'http://localhost:3000';
                         window.open(url, '_blank');
                     });
                 });
+            }
+            
+            // Get AI response
+            async function getAIResponse(prompt, model) {
+                try {
+                    typingIndicator.style.display = 'block';
+                    
+                    // Determine response type based on prompt
+                    const wantsCode = /code|example|how to|implement|create|write|show/i.test(prompt);
+                    const wantsLink = /link|github|resource|reference/i.test(prompt);
+                    
+                    let response;
+                    
+                    if (wantsCode) {
+                        // Generate code example
+                        response = `Here's the code you requested:\n\n\`\`\`javascript\n${generateCodeExample(prompt)}\n\`\`\`\n\nTo run this code:\n1. Save the file\n2. Run \`node filename.js\`\n3. Open in browser: http://localhost:3000`;
+                    } 
+                    else if (wantsLink) {
+                        // Generate link response
+                        response = `Here are some useful resources:\n\n- [Official Documentation](https://example.com/docs)\n- [GitHub Repository](https://github.com/example/repo)\n- [Tutorial Guide](https://example.com/tutorial)`;
+                    }
+                    else {
+                        // Generate general response
+                        response = `Here's information about "${prompt}":\n\nThis is a detailed response based on your query. Let me know if you need more specific information.`;
+                    }
+                    
+                    return response;
+                } catch (error) {
+                    console.error('Error:', error);
+                    return "Sorry, there was an error processing your request.";
+                } finally {
+                    typingIndicator.style.display = 'none';
+                }
+            }
+
+            // Generate code examples
+            function generateCodeExample(prompt) {
+                if (/express|server|node/i.test(prompt)) {
+                    return `const express = require('express');
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(port, () => {
+  console.log(\`Server running at http://localhost:\${port}\`);
+});`;
+                } 
+                else if (/html|page|website/i.test(prompt)) {
+                    return `<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>Hello World</h1>
+    <p>This is a simple HTML page</p>
+</body>
+</html>`;
+                }
+                else {
+                    return `// Custom implementation for: ${prompt}
+function customFunction() {
+    // Your code here
+    return "Result";
+}`;
+                }
             }
             
             // Send message
@@ -577,34 +661,8 @@
                 userInput.style.height = 'auto';
                 sendBtn.disabled = true;
                 
-                // Simulate AI response
-                setTimeout(() => {
-                    const sampleResponse = `
-Here's a simple Express server code:
-
-\`\`\`javascript
-const express = require('express');
-const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-app.listen(port, () => {
-  console.log(\`Server running at http://localhost:\${port}\`);
-});
-\`\`\`
-
-To run this code:
-1. Save as server.js
-2. Run \`node server.js\`
-3. Open in browser: http://localhost:3000
-
-For more info: https://expressjs.com/
-`;
-                    addMessage(sampleResponse, false);
-                }, 1000);
+                const response = await getAIResponse(message, selectedModel);
+                addMessage(response, false);
             }
             
             // Event listeners
