@@ -6,16 +6,36 @@
     <title>Marisel AI Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --primary: #6366f1;
+            --secondary: #1e293b;
+            --border-color: #334155;
+            --gray: #94a3b8;
+            --code-bg: #0f172a;
+        }
+
+        .light-theme {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --secondary: #e2e8f0;
+            --border-color: #cbd5e1;
+            --gray: #64748b;
+            --code-bg: #f1f5f9;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -23,11 +43,11 @@
         
         .header {
             padding: 15px;
-            background-color: #1e293b;
+            background-color: var(--secondary);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -36,14 +56,24 @@
         .logo {
             font-weight: bold;
             font-size: 18px;
-            color: #6366f1;
+            color: var(--primary);
             display: flex;
             align-items: center;
             gap: 8px;
         }
         
-        .logo i {
-            font-size: 20px;
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            cursor: pointer;
         }
         
         .model-selector {
@@ -51,9 +81,9 @@
         }
         
         .model-btn {
-            background-color: #1e293b;
-            color: #f8fafc;
-            border: 1px solid #334155;
+            background-color: var(--secondary);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 6px 12px;
             font-size: 14px;
@@ -61,19 +91,14 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .model-btn:hover {
-            border-color: #6366f1;
         }
         
         .model-dropdown {
             position: absolute;
             right: 0;
             top: 40px;
-            background-color: #1e293b;
-            border: 1px solid #334155;
+            background-color: var(--secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             width: 220px;
             z-index: 100;
@@ -91,27 +116,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.2s;
         }
         
         .model-option:hover {
-            background-color: #334155;
-        }
-        
-        .model-option i {
-            width: 20px;
-            text-align: center;
-            color: #6366f1;
-        }
-        
-        .model-option .model-name {
-            flex: 1;
-        }
-        
-        .model-option .model-desc {
-            font-size: 11px;
-            color: #94a3b8;
-            margin-top: 2px;
+            background-color: var(--border-color);
         }
         
         .chat-container {
@@ -130,52 +138,128 @@
             font-size: 15px;
             line-height: 1.6;
             position: relative;
-            transition: all 0.2s;
         }
         
-        .message.user-message {
+        .user-message {
             align-self: flex-end;
-            background-color: #6366f1;
+            background-color: var(--primary);
             color: white;
-            border-bottom-right-radius: 4px;
         }
         
-        .message.ai-message {
+        .ai-message {
             align-self: flex-start;
-            background-color: #1e293b;
-            border-bottom-left-radius: 4px;
-            border: 1px solid #334155;
+            background-color: var(--secondary);
+            border: 1px solid var(--border-color);
         }
         
         .message-title {
             font-weight: 600;
             font-size: 16px;
             margin-bottom: 8px;
-            color: #f8fafc;
+            color: var(--text-color);
         }
         
         .message-content {
             word-wrap: break-word;
+            white-space: pre-wrap;
         }
         
         .message-content pre {
-            background-color: #0f172a;
+            background-color: var(--code-bg);
             border-radius: 8px;
-            padding: 12px;
+            padding: 15px;
             overflow-x: auto;
-            margin: 10px 0;
-            border: 1px solid #334155;
+            margin: 12px 0;
+            border: 1px solid var(--border-color);
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
+            position: relative;
         }
         
-        .message-content code {
-            background-color: #0f172a;
-            padding: 2px 4px;
+        .code-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .code-action {
+            background-color: var(--secondary);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .code-action:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .message-content a {
+            color: var(--primary);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .message-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .link-container {
+            background-color: var(--secondary);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .link-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-color);
+        }
+        
+        .link-url {
+            color: var(--gray);
             font-size: 14px;
-            border: 1px solid #334155;
+            word-break: break-all;
+        }
+        
+        .link-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .link-action {
+            background-color: var(--secondary);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .link-action:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .explanation {
+            margin: 12px 0;
+            padding-left: 12px;
+            border-left: 3px solid var(--primary);
         }
         
         .message-footer {
@@ -187,11 +271,11 @@
         }
         
         .message-time {
-            color: #94a3b8;
+            color: var(--gray);
         }
         
         .message-model {
-            color: #64748b;
+            color: var(--gray);
             font-style: italic;
         }
         
@@ -200,134 +284,33 @@
             gap: 12px;
         }
         
-        .message-action {
-            color: #94a3b8;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .message-action:hover {
-            color: #6366f1;
-        }
-        
-        .message-action.active {
-            color: #6366f1;
-        }
-        
-        .image-container {
-            margin-top: 10px;
-            position: relative;
-        }
-        
-        .generated-image {
-            max-width: 100%;
-            border-radius: 8px;
-            border: 1px solid #334155;
-        }
-        
-        .image-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        
-        .image-action {
-            background-color: #1e293b;
-            color: #f8fafc;
-            border: 1px solid #334155;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s;
-        }
-        
-        .image-action:hover {
-            background-color: #6366f1;
-            border-color: #6366f1;
-        }
-        
         .input-area {
             padding: 15px;
-            background-color: #1e293b;
-            border-top: 1px solid #334155;
+            background-color: var(--secondary);
+            border-top: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
             position: sticky;
             bottom: 0;
         }
         
-        .input-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
         #user-input {
-            background-color: #0f172a;
-            border: 1px solid #334155;
+            flex: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 12px 15px;
-            color: #f8fafc;
+            color: var(--text-color);
             font-size: 15px;
             resize: none;
             max-height: 120px;
-            transition: all 0.2s;
-        }
-        
-        #user-input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-        }
-        
-        .file-upload {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            margin-left: 10px;
-        }
-        
-        .file-upload-label {
-            color: #94a3b8;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .file-upload-label:hover {
-            color: #6366f1;
-        }
-        
-        .file-preview {
-            display: none;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-top: 8px;
-        }
-        
-        .remove-file {
-            color: #ef4444;
-            cursor: pointer;
         }
         
         #send-btn {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background-color: #6366f1;
+            background-color: var(--primary);
             color: white;
             border: none;
             display: flex;
@@ -335,92 +318,20 @@
             justify-content: center;
             cursor: pointer;
             flex-shrink: 0;
-            transition: all 0.2s;
-        }
-        
-        #send-btn:hover {
-            background-color: #4f46e5;
-            transform: scale(1.05);
-        }
-        
-        #send-btn:disabled {
-            background-color: #334155;
-            cursor: not-allowed;
-            transform: none;
         }
         
         .typing-indicator {
             align-self: flex-start;
-            background-color: #1e293b;
+            background-color: var(--secondary);
             padding: 12px 15px;
             border-radius: 12px;
-            border-bottom-left-radius: 4px;
             display: none;
-            border: 1px solid #334155;
+            border: 1px solid var(--border-color);
         }
         
-        .typing-content {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #94a3b8;
-        }
-        
-        .typing-dots {
-            display: inline-flex;
-            gap: 4px;
-        }
-        
-        .typing-dots span {
-            width: 8px;
-            height: 8px;
-            background-color: #94a3b8;
-            border-radius: 50%;
-            animation: bounce 1s infinite;
-        }
-        
-        .typing-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .typing-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-        }
-        
-        /* Slide to reply effect */
-        .message {
-            transition: transform 0.3s ease;
-        }
-        
-        .message.swipe-left {
-            transform: translateX(-50px);
-        }
-        
-        .message.swipe-right {
-            transform: translateX(50px);
-        }
-        
-        /* Mobile optimizations */
         @media (max-width: 768px) {
             .message {
                 max-width: 90%;
-            }
-            
-            .model-dropdown {
-                width: 200px;
-            }
-            
-            .input-area {
-                padding: 12px;
-            }
-            
-            #user-input {
-                padding: 10px 12px;
             }
         }
     </style>
@@ -431,59 +342,35 @@
             <i class="fas fa-robot"></i>
             <span>Marisel AI Pro</span>
         </div>
-        <div class="model-selector">
-            <button class="model-btn" id="model-btn">
-                <span id="current-model">GPT-4o</span>
-                <i class="fas fa-chevron-down"></i>
+        <div class="header-actions">
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
             </button>
-            <div class="model-dropdown" id="model-dropdown">
-                <div class="model-option" data-model="gpt4o">
-                    <i class="fas fa-robot"></i>
-                    <div>
-                        <div class="model-name">GPT-4o</div>
-                        <div class="model-desc">Most advanced model</div>
+            <div class="model-selector">
+                <button class="model-btn" id="model-btn">
+                    <span id="current-model">GPT-4o</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="model-dropdown" id="model-dropdown">
+                    <div class="model-option" data-model="gpt4o">
+                        <i class="fas fa-robot"></i>
+                        <span>GPT-4o</span>
                     </div>
-                </div>
-                <div class="model-option" data-model="qwen">
-                    <i class="fas fa-brain"></i>
-                    <div>
-                        <div class="model-name">Qwen</div>
-                        <div class="model-desc">Alibaba's AI model</div>
+                    <div class="model-option" data-model="qwen">
+                        <i class="fas fa-brain"></i>
+                        <span>Qwen</span>
                     </div>
-                </div>
-                <div class="model-option" data-model="groq-beta">
-                    <i class="fas fa-bolt"></i>
-                    <div>
-                        <div class="model-name">Groq Beta</div>
-                        <div class="model-desc">Ultra-fast responses</div>
+                    <div class="model-option" data-model="groq-beta">
+                        <i class="fas fa-bolt"></i>
+                        <span>Groq Beta</span>
                     </div>
-                </div>
-                <div class="model-option" data-model="meta-llama">
-                    <i class="fas fa-horse-head"></i>
-                    <div>
-                        <div class="model-name">Meta Llama</div>
-                        <div class="model-desc">Open-source model</div>
+                    <div class="model-option" data-model="meta-llama">
+                        <i class="fas fa-horse-head"></i>
+                        <span>Meta Llama</span>
                     </div>
-                </div>
-                <div class="model-option" data-model="gemma">
-                    <i class="fas fa-gem"></i>
-                    <div>
-                        <div class="model-name">Gemma</div>
-                        <div class="model-desc">Google's lightweight model</div>
-                    </div>
-                </div>
-                <div class="model-option" data-model="deepimg">
-                    <i class="fas fa-image"></i>
-                    <div>
-                        <div class="model-name">Deep Image</div>
-                        <div class="model-desc">AI image generation</div>
-                    </div>
-                </div>
-                <div class="model-option" data-model="fluximg">
-                    <i class="fas fa-magic"></i>
-                    <div>
-                        <div class="model-name">Flux Image</div>
-                        <div class="model-desc">Creative image AI</div>
+                    <div class="model-option" data-model="gemma">
+                        <i class="fas fa-gem"></i>
+                        <span>Gemma</span>
                     </div>
                 </div>
             </div>
@@ -492,57 +379,24 @@
     
     <div class="chat-container" id="chat-container">
         <div class="message ai-message">
-            <div class="message-title">Welcome to Marisel AI Pro</div>
+            <div class="message-title">Marisel AI Response</div>
             <div class="message-content">
-                Hello! I'm your advanced AI assistant. Select a model from the dropdown above and start chatting!
+                Hello! I'm Marisel AI. Ask me for code examples, and I'll provide:
+                - Clean, copyable code blocks
+                - "Open in Browser" options for localhost links
+                - Clear explanations
+                - Dark/light theme support
             </div>
             <div class="message-footer">
                 <div class="message-time" id="current-time"></div>
                 <div class="message-model">GPT-4o</div>
-                <div class="message-actions">
-                    <div class="message-action" title="Copy">
-                        <i class="far fa-copy"></i>
-                    </div>
-                    <div class="message-action" title="Regenerate">
-                        <i class="fas fa-redo"></i>
-                    </div>
-                    <div class="message-action" title="Like">
-                        <i class="far fa-thumbs-up"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="typing-indicator" id="typing-indicator">
-            <div class="typing-content">
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <span>Marisel AI is typing...</span>
             </div>
         </div>
     </div>
     
     <div class="input-area">
-        <div class="input-wrapper">
-            <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
-            <div class="file-upload">
-                <label for="file-upload-input" class="file-upload-label">
-                    <i class="fas fa-paperclip"></i>
-                    <span>Attach</span>
-                </label>
-                <input type="file" id="file-upload-input" style="display: none;">
-                <div class="file-preview" id="file-preview">
-                    <span id="file-name"></span>
-                    <span class="remove-file" id="remove-file">
-                        <i class="fas fa-times"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <button id="send-btn" disabled>
+        <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
+        <button id="send-btn">
             <i class="fas fa-paper-plane"></i>
         </button>
     </div>
@@ -550,6 +404,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM elements
+            const themeToggle = document.getElementById('theme-toggle');
             const modelBtn = document.getElementById('model-btn');
             const modelDropdown = document.getElementById('model-dropdown');
             const currentModel = document.getElementById('current-model');
@@ -557,41 +412,33 @@
             const userInput = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
             const typingIndicator = document.getElementById('typing-indicator');
-            const fileUploadInput = document.getElementById('file-upload-input');
-            const filePreview = document.getElementById('file-preview');
-            const fileName = document.getElementById('file-name');
-            const removeFile = document.getElementById('remove-file');
             
-            // Current model state
-            let selectedModel = 'gpt4o';
-            let currentFile = null;
-            let touchStartX = 0;
-            let touchEndX = 0;
+            // Theme toggle
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-theme');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('light-theme')) {
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                }
+            });
             
-            // Toggle model dropdown
+            // Model selection
             modelBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 modelDropdown.classList.toggle('show');
             });
             
-            // Close dropdown when clicking outside
             document.addEventListener('click', function() {
                 modelDropdown.classList.remove('show');
             });
             
-            // Model selection
             document.querySelectorAll('.model-option').forEach(option => {
                 option.addEventListener('click', function() {
                     selectedModel = this.dataset.model;
-                    currentModel.textContent = this.querySelector('.model-name').textContent;
+                    currentModel.textContent = this.querySelector('span').textContent;
                     modelDropdown.classList.remove('show');
-                    
-                    // Update placeholder based on model type
-                    if (selectedModel.includes('img')) {
-                        userInput.placeholder = "Describe the image you want to generate...";
-                    } else {
-                        userInput.placeholder = "Type your message...";
-                    }
                 });
             });
             
@@ -599,25 +446,7 @@
             userInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
-                sendBtn.disabled = this.value.trim() === '' && !currentFile;
-            });
-            
-            // File upload handling
-            fileUploadInput.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    currentFile = e.target.files[0];
-                    fileName.textContent = currentFile.name;
-                    filePreview.style.display = 'flex';
-                    sendBtn.disabled = userInput.value.trim() === '' && !currentFile;
-                }
-            });
-            
-            // Remove file
-            removeFile.addEventListener('click', function() {
-                fileUploadInput.value = '';
-                currentFile = null;
-                filePreview.style.display = 'none';
-                sendBtn.disabled = userInput.value.trim() === '';
+                sendBtn.disabled = this.value.trim() === '';
             });
             
             // Get current time
@@ -631,35 +460,60 @@
                 return `${hours}:${minutes} ${ampm}`;
             }
             
-            // Set initial time
-            document.getElementById('current-time').textContent = getCurrentTime();
-            
-            // Format message content (detect code blocks, add bold titles, etc.)
+            // Format message content
             function formatMessageContent(text) {
-                // Simple markdown-like formatting
-                let formatted = text;
-                
-                // Bold titles (lines starting with ##)
-                formatted = formatted.replace(/^##\s(.+)$/gm, '<strong>$1</strong>');
-                
-                // Code blocks
-                formatted = formatted.replace(/```([\s\S]*?)```/g, function(match, code) {
-                    return `<pre>${code.trim()}</pre>`;
+                // Process code blocks
+                let formatted = text.replace(/```(\w*)([\s\S]*?)```/g, function(match, lang, code) {
+                    const langClass = lang ? `language-${lang}` : '';
+                    return `
+                        <pre class="${langClass}">
+                            <div class="code-actions">
+                                <button class="code-action copy-code">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                                <button class="code-action open-browser" style="display: none;">
+                                    <i class="fas fa-external-link-alt"></i> Open
+                                </button>
+                            </div>
+                            ${code.trim()}
+                        </pre>
+                    `;
                 });
                 
-                // Inline code
-                formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+                // Process localhost links
+                formatted = formatted.replace(/(https?:\/\/localhost:\d+[^\s]*)/g, function(url) {
+                    return `
+                        <div class="link-container">
+                            <div class="link-url">
+                                <a href="${url}" target="_blank">${url}</a>
+                            </div>
+                            <div class="link-actions">
+                                <button class="link-action open-browser">
+                                    <i class="fas fa-external-link-alt"></i> Open in Browser
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Process other links
+                formatted = formatted.replace(/(https?:\/\/[^\s]+)/g, function(url) {
+                    return `
+                        <div class="link-container">
+                            <div class="link-url">
+                                <a href="${url}" target="_blank">${url}</a>
+                            </div>
+                        </div>
+                    `;
+                });
                 
                 return formatted;
             }
             
             // Add message to chat
-            function addMessage(text, isUser, isImage = false) {
+            function addMessage(text, isUser) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
-                
-                // Add swipe event listeners
-                addSwipeEvents(messageDiv);
                 
                 if (!isUser) {
                     const messageTitle = document.createElement('div');
@@ -670,47 +524,9 @@
                 
                 const messageContent = document.createElement('div');
                 messageContent.className = 'message-content';
-                
-                if (isImage && (text.startsWith('http') || text.startsWith('https'))) {
-                    // Image response
-                    const imageContainer = document.createElement('div');
-                    imageContainer.className = 'image-container';
-                    
-                    const img = document.createElement('img');
-                    img.src = text;
-                    img.className = 'generated-image';
-                    img.alt = 'Generated image';
-                    
-                    const imageActions = document.createElement('div');
-                    imageActions.className = 'image-actions';
-                    
-                    const downloadBtn = document.createElement('a');
-                    downloadBtn.href = text;
-                    downloadBtn.className = 'image-action';
-                    downloadBtn.download = 'marisel-ai-image-' + Date.now() + '.jpg';
-                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
-                    
-                    const viewBtn = document.createElement('a');
-                    viewBtn.href = text;
-                    viewBtn.className = 'image-action';
-                    viewBtn.target = '_blank';
-                    viewBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> View';
-                    
-                    imageActions.appendChild(downloadBtn);
-                    imageActions.appendChild(viewBtn);
-                    
-                    imageContainer.appendChild(img);
-                    imageContainer.appendChild(imageActions);
-                    
-                    messageContent.appendChild(imageContainer);
-                } else {
-                    // Text response
-                    messageContent.innerHTML = formatMessageContent(text);
-                }
-                
+                messageContent.innerHTML = formatMessageContent(text);
                 messageDiv.appendChild(messageContent);
                 
-                // Message footer
                 const messageFooter = document.createElement('div');
                 messageFooter.className = 'message-footer';
                 
@@ -720,212 +536,79 @@
                 
                 const messageModel = document.createElement('div');
                 messageModel.className = 'message-model';
-                messageModel.textContent = selectedModel;
-                
-                const messageActions = document.createElement('div');
-                messageActions.className = 'message-actions';
-                
-                if (!isUser) {
-                    const copyAction = document.createElement('div');
-                    copyAction.className = 'message-action';
-                    copyAction.title = 'Copy';
-                    copyAction.innerHTML = '<i class="far fa-copy"></i>';
-                    copyAction.addEventListener('click', function() {
-                        navigator.clipboard.writeText(text);
-                        this.innerHTML = '<i class="fas fa-copy"></i>';
-                        setTimeout(() => {
-                            this.innerHTML = '<i class="far fa-copy"></i>';
-                        }, 1000);
-                    });
-                    
-                    const regenerateAction = document.createElement('div');
-                    regenerateAction.className = 'message-action';
-                    regenerateAction.title = 'Regenerate';
-                    regenerateAction.innerHTML = '<i class="fas fa-redo"></i>';
-                    regenerateAction.addEventListener('click', async function() {
-                        if (isUser) return;
-                        
-                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                        const lastUserMessage = document.querySelector('.user-message:last-child');
-                        
-                        if (lastUserMessage) {
-                            const question = lastUserMessage.querySelector('.message-content').textContent;
-                            const aiResponse = await getAIResponse(question);
-                            
-                            messageContent.innerHTML = formatMessageContent(aiResponse);
-                        }
-                        
-                        this.innerHTML = '<i class="fas fa-redo"></i>';
-                    });
-                    
-                    const likeAction = document.createElement('div');
-                    likeAction.className = 'message-action';
-                    likeAction.title = 'Like';
-                    likeAction.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                    likeAction.addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        this.innerHTML = this.classList.contains('active') ? 
-                            '<i class="fas fa-thumbs-up"></i>' : 
-                            '<i class="far fa-thumbs-up"></i>';
-                    });
-                    
-                    messageActions.appendChild(copyAction);
-                    messageActions.appendChild(regenerateAction);
-                    messageActions.appendChild(likeAction);
-                }
+                messageModel.textContent = isUser ? 'You' : currentModel.textContent;
                 
                 messageFooter.appendChild(messageTime);
                 messageFooter.appendChild(messageModel);
-                messageFooter.appendChild(messageActions);
-                
                 messageDiv.appendChild(messageFooter);
                 
                 chatContainer.insertBefore(messageDiv, typingIndicator);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-            
-            // Add swipe events to messages
-            function addSwipeEvents(element) {
-                let touchStartX = 0;
-                let touchEndX = 0;
                 
-                element.addEventListener('touchstart', function(e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, false);
-                
-                element.addEventListener('touchend', function(e) {
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe(element);
-                }, false);
-                
-                // Mouse events for desktop testing
-                element.addEventListener('mousedown', function(e) {
-                    touchStartX = e.clientX;
-                    document.addEventListener('mouseup', function mouseUp(e) {
-                        touchEndX = e.clientX;
-                        handleSwipe(element);
-                        document.removeEventListener('mouseup', mouseUp);
+                // Add event listeners for new buttons
+                messageDiv.querySelectorAll('.copy-code').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const code = this.closest('pre').textContent.replace('CopyOpen', '').trim();
+                        navigator.clipboard.writeText(code);
+                        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="far fa-copy"></i> Copy';
+                        }, 2000);
                     });
                 });
-            }
-            
-            function handleSwipe(element) {
-                const difference = touchStartX - touchEndX;
                 
-                // Swipe left (reply)
-                if (difference > 50) {
-                    element.classList.add('swipe-left');
-                    setTimeout(() => {
-                        element.classList.remove('swipe-left');
-                    }, 300);
-                    
-                    // Focus input and add "Replying to" text
-                    userInput.focus();
-                    const messageText = element.querySelector('.message-content').textContent;
-                    userInput.value = `Replying to: "${messageText.substring(0, 50)}${messageText.length > 50 ? '...' : ''}"\n\n`;
-                    userInput.dispatchEvent(new Event('input'));
-                }
-                // Swipe right (copy)
-                else if (difference < -50) {
-                    element.classList.add('swipe-right');
-                    setTimeout(() => {
-                        element.classList.remove('swipe-right');
-                    }, 300);
-                    
-                    const messageText = element.querySelector('.message-content').textContent;
-                    navigator.clipboard.writeText(messageText);
-                    
-                    // Show copied notification
-                    const notification = document.createElement('div');
-                    notification.textContent = 'Copied to clipboard';
-                    notification.style.position = 'fixed';
-                    notification.style.bottom = '80px';
-                    notification.style.left = '50%';
-                    notification.style.transform = 'translateX(-50%)';
-                    notification.style.backgroundColor = '#6366f1';
-                    notification.style.color = 'white';
-                    notification.style.padding = '8px 16px';
-                    notification.style.borderRadius = '20px';
-                    notification.style.zIndex = '1000';
-                    document.body.appendChild(notification);
-                    
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 2000);
-                }
-            }
-            
-            // Get AI response
-            async function getAIResponse(prompt) {
-                try {
-                    typingIndicator.style.display = 'block';
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                    
-                    let apiUrl = '';
-                    const encodedPrompt = encodeURIComponent(prompt);
-                    
-                    // Select API based on current model
-                    switch(selectedModel) {
-                        case 'gpt4o':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'qwen':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/qwen?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'groq-beta':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/groq-beta?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'meta-llama':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/meta-llama?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'gemma':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gemma?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'deepimg':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepimg?apikey=gifted&prompt=${encodedPrompt}`;
-                            break;
-                        case 'fluximg':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/fluximg?apikey=gifted&prompt=${encodedPrompt}`;
-                            break;
-                    }
-                    
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
-                    
-                    return data.response || data.answer || data.message || data.result || "I couldn't process that request.";
-                } catch (error) {
-                    console.error('Error:', error);
-                    return "Sorry, there was an error processing your request.";
-                } finally {
-                    typingIndicator.style.display = 'none';
-                }
+                messageDiv.querySelectorAll('.open-browser').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const url = this.closest('.link-container') ? 
+                            this.closest('.link-container').querySelector('a').href : 
+                            'http://localhost:3000'; // Default port for code examples
+                        window.open(url, '_blank');
+                    });
+                });
             }
             
             // Send message
             async function sendMessage() {
                 const message = userInput.value.trim();
-                if (!message && !currentFile) return;
+                if (!message) return;
                 
-                addMessage(message || (currentFile ? `[Attached: ${currentFile.name}]` : ''), true);
+                addMessage(message, true);
                 userInput.value = '';
                 userInput.style.height = 'auto';
-                
-                if (currentFile) {
-                    fileUploadInput.value = '';
-                    currentFile = null;
-                    filePreview.style.display = 'none';
-                }
-                
                 sendBtn.disabled = true;
                 
-                const response = await getAIResponse(message);
-                addMessage(response, false, selectedModel.includes('img'));
+                // Simulate AI response
+                setTimeout(() => {
+                    const sampleResponse = `
+Here's a simple Express server code:
+
+\`\`\`javascript
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(port, () => {
+  console.log(\`Server running at http://localhost:\${port}\`);
+});
+\`\`\`
+
+To run this code:
+1. Save as server.js
+2. Run \`node server.js\`
+3. Open in browser: http://localhost:3000
+
+For more info: https://expressjs.com/
+`;
+                    addMessage(sampleResponse, false);
+                }, 1000);
             }
             
-            // Send button click
+            // Event listeners
             sendBtn.addEventListener('click', sendMessage);
-            
-            // Enter key to send (Shift+Enter for new line)
             userInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -933,7 +616,8 @@
                 }
             });
             
-            // Focus input on load
+            // Initialize
+            document.getElementById('current-time').textContent = getCurrentTime();
             userInput.focus();
         });
     </script>
