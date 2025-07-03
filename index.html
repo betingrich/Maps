@@ -1033,3 +1033,319 @@
                         messageContent.appendChild(textDiv);
                     }
                 } else if (isUser && currentFile) {
+                    // User uploaded non-image file
+                    const fileDiv = document.createElement('div');
+                    fileDiv.style.display = 'flex';
+                    fileDiv.style.alignItems = 'center';
+                    fileDiv.style.gap = '8px';
+                    fileDiv.style.padding = '8px';
+                    fileDiv.style.backgroundColor = 'var(--border-color)';
+                    fileDiv.style.borderRadius = '8px';
+                    fileDiv.style.marginBottom = '10px';
+                    
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-file';
+                    icon.style.fontSize = '20px';
+                    
+                    const fileName = document.createElement('span');
+                    fileName.textContent = currentFile.name;
+                    
+                    fileDiv.appendChild(icon);
+                    fileDiv.appendChild(fileName);
+                    
+                    messageContent.appendChild(fileDiv);
+                    
+                    if (text) {
+                        const textDiv = document.createElement('div');
+                        textDiv.textContent = text;
+                        textDiv.style.marginTop = '10px';
+                        messageContent.appendChild(textDiv);
+                    }
+                } else {
+                    // Text response
+                    messageContent.innerHTML = formatMessageContent(text);
+                }
+                
+                messageDiv.appendChild(messageContent);
+                
+                // Message footer
+                const messageFooter = document.createElement('div');
+                messageFooter.className = 'message-footer';
+                
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = getCurrentTime();
+                
+                const messageModel = document.createElement('div');
+                messageModel.className = 'message-model';
+                messageModel.textContent = selectedModel;
+                
+                const messageActions = document.createElement('div');
+                messageActions.className = 'message-actions';
+                
+                if (!isUser) {
+                    const copyAction = document.createElement('div');
+                    copyAction.className = 'message-action';
+                    copyAction.title = 'Copy';
+                    copyAction.innerHTML = '<i class="far fa-copy"></i>';
+                    copyAction.addEventListener('click', function() {
+                        navigator.clipboard.writeText(text);
+                        this.innerHTML = '<i class="fas fa-copy"></i>';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="far fa-copy"></i>';
+                        }, 1000);
+                    });
+                    
+                    const regenerateAction = document.createElement('div');
+                    regenerateAction.className = 'message-action';
+                    regenerateAction.title = 'Regenerate';
+                    regenerateAction.innerHTML = '<i class="fas fa-redo"></i>';
+                    regenerateAction.addEventListener('click', async function() {
+                        if (isUser) return;
+                        
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                        const lastUserMessage = document.querySelector('.user-message:last-child');
+                        
+                        if (lastUserMessage) {
+                            const question = lastUserMessage.querySelector('.message-content').textContent;
+                            const aiResponse = await getAIResponse(question);
+                            
+                            messageContent.innerHTML = formatMessageContent(aiResponse);
+                        }
+                        
+                        this.innerHTML = '<i class="fas fa-redo"></i>';
+                    });
+                    
+                    const likeAction = document.createElement('div');
+                    likeAction.className = 'message-action';
+                    likeAction.title = 'Like';
+                    likeAction.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                    likeAction.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        this.innerHTML = this.classList.contains('active') ? 
+                            '<i class="fas fa-thumbs-up"></i>' : 
+                            '<i class="far fa-thumbs-up"></i>';
+                    });
+                    
+                    messageActions.appendChild(copyAction);
+                    messageActions.appendChild(regenerateAction);
+                    messageActions.appendChild(likeAction);
+                }
+                
+                messageFooter.appendChild(messageTime);
+                messageFooter.appendChild(messageModel);
+                messageFooter.appendChild(messageActions);
+                
+                messageDiv.appendChild(messageFooter);
+                
+                chatContainer.insertBefore(messageDiv, typingIndicator);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Add swipe events to messages
+            function addSwipeEvents(element) {
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                element.addEventListener('touchstart', function(e) {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, false);
+                
+                element.addEventListener('touchend', function(e) {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe(element);
+                }, false);
+                
+                // Mouse events for desktop testing
+                element.addEventListener('mousedown', function(e) {
+                    touchStartX = e.clientX;
+                    document.addEventListener('mouseup', function mouseUp(e) {
+                        touchEndX = e.clientX;
+                        handleSwipe(element);
+                        document.removeEventListener('mouseup', mouseUp);
+                    });
+                });
+            }
+            
+            function handleSwipe(element) {
+                const difference = touchStartX - touchEndX;
+                
+                // Swipe left (reply)
+                if (difference > 50) {
+                    element.classList.add('swipe-left');
+                    setTimeout(() => {
+                        element.classList.remove('swipe-left');
+                    }, 300);
+                    
+                    // Focus input and add "Replying to" text
+                    userInput.focus();
+                    const messageText = element.querySelector('.message-content').textContent;
+                    userInput.value = `Replying to: "${messageText.substring(0, 50)}${messageText.length > 50 ? '...' : ''}"\n\n`;
+                    userInput.dispatchEvent(new Event('input'));
+                }
+                // Swipe right (copy)
+                else if (difference < -50) {
+                    element.classList.add('swipe-right');
+                    setTimeout(() => {
+                        element.classList.remove('swipe-right');
+                    }, 300);
+                    
+                    const messageText = element.querySelector('.message-content').textContent;
+                    navigator.clipboard.writeText(messageText);
+                    
+                    // Show copied notification
+                    const notification = document.createElement('div');
+                    notification.textContent = 'Copied to clipboard';
+                    notification.style.position = 'fixed';
+                    notification.style.bottom = '80px';
+                    notification.style.left = '50%';
+                    notification.style.transform = 'translateX(-50%)';
+                    notification.style.backgroundColor = 'var(--accent-color)';
+                    notification.style.color = 'white';
+                    notification.style.padding = '8px 16px';
+                    notification.style.borderRadius = '20px';
+                    notification.style.zIndex = '1000';
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 2000);
+                }
+            }
+            
+            // Get AI response
+            async function getAIResponse(prompt) {
+                try {
+                    typingIndicator.style.display = 'block';
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    
+                    let apiUrl = '';
+                    const encodedPrompt = encodeURIComponent(prompt);
+                    
+                    // Select API based on current model
+                    switch(selectedModel) {
+                        case 'gpt4o':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'gpt4':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'gpt4o-mini':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o-mini?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'mistral':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/mistral?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'vision':
+                            if (currentFile && currentFile.type.startsWith('image/')) {
+                                // Convert image to base64
+                                const base64Image = await getBase64(currentFile);
+                                apiUrl = `https://api.giftedtech.web.id/api/ai/vision?apikey=gifted&url=${encodeURIComponent(base64Image)}&prompt=${encodedPrompt}`;
+                            } else {
+                                return "Please upload an image to use the Vision AI model.";
+                            }
+                            break;
+                        case 'geminiai':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/geminiai?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'geminiaipro':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/geminiaipro?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'letmegpt':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/letmegpt?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'deepseek-v3':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepseek-v3?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'deepseek-r1':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepseek-r1?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'deepseek-llm':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepseek-llm?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'chat':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/chat?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'meta-llama':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/meta-llama?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'qwen':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/qwen?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        case 'groq-beta':
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/groq-beta?apikey=gifted&q=${encodedPrompt}`;
+                            break;
+                        default:
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/chat?apikey=gifted&q=${encodedPrompt}`;
+                    }
+                    
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    
+                    return data.response || data.answer || data.message || data.result || "I couldn't process that request.";
+                } catch (error) {
+                    console.error('Error:', error);
+                    return "Sorry, there was an error processing your request.";
+                } finally {
+                    typingIndicator.style.display = 'none';
+                }
+            }
+            
+            // Convert file to base64
+            function getBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                });
+            }
+            
+            // Send message
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (!message && !currentFile) return;
+                
+                addMessage(message || (currentFile ? '' : ''), true);
+                userInput.value = '';
+                userInput.style.height = 'auto';
+                
+                if (currentFile) {
+                    // For vision model, don't clear the file immediately
+                    if (selectedModel !== 'vision') {
+                        fileUploadInput.value = '';
+                        currentFile = null;
+                        mediaPreview.style.display = 'none';
+                    }
+                }
+                
+                sendBtn.disabled = true;
+                
+                const response = await getAIResponse(message);
+                addMessage(response, false, selectedModel.includes('img'));
+                
+                // Clear file after sending for vision model
+                if (selectedModel === 'vision' && currentFile) {
+                    fileUploadInput.value = '';
+                    currentFile = null;
+                    mediaPreview.style.display = 'none';
+                }
+            }
+            
+            // Send button click
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // Enter key to send (Shift+Enter for new line)
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Focus input on load
+            userInput.focus();
+        });
+    </script>
+</body>
+</html>
