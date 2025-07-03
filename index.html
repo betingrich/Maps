@@ -6,146 +6,84 @@
     <title>Marisel AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-        
-        :root {
-            --primary: #6366f1;
-            --dark: #1e293b;
-            --darker: #0f172a;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         
         body {
-            background-color: var(--darker);
-            color: var(--light);
+            background-color: #0f172a;
+            color: #f8fafc;
             height: 100vh;
-            overflow: hidden;
-        }
-        
-        /* Mobile Layout */
-        .app-container {
-            display: flex;
-            height: 100vh;
-            position: relative;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 0;
-            background-color: var(--dark);
-            height: 100%;
-            overflow-y: auto;
-            transition: 0.3s;
-            position: fixed;
-            z-index: 100;
-        }
-        
-        .sidebar.open {
-            width: 250px;
-        }
-        
-        .sidebar-header {
-            padding: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .logo {
-            width: 30px;
-            height: 30px;
-            background: var(--primary);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .sidebar-title {
-            font-size: 16px;
-        }
-        
-        .model-list {
-            padding: 10px 0;
-        }
-        
-        .model-item {
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            border-left: 3px solid transparent;
-        }
-        
-        .model-item.active {
-            background: rgba(99, 102, 241, 0.1);
-            border-left-color: var(--primary);
-        }
-        
-        .model-item:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        
-        .model-icon {
-            width: 20px;
-            text-align: center;
-            color: var(--gray);
-        }
-        
-        .model-item.active .model-icon {
-            color: var(--primary);
-        }
-        
-        .model-name {
-            font-size: 14px;
-        }
-        
-        /* Main Chat Area */
-        .chat-area {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100vh;
         }
         
         .header {
             padding: 15px;
-            background: var(--dark);
+            background-color: #1e293b;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid #334155;
         }
         
-        .menu-btn {
-            background: none;
-            border: none;
-            color: var(--light);
-            font-size: 20px;
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #6366f1;
+        }
+        
+        .model-selector {
+            position: relative;
+        }
+        
+        .model-btn {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
         }
         
-        .current-model {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 13px;
+        .model-dropdown {
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            width: 200px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .model-dropdown.show {
+            display: block;
+        }
+        
+        .model-option {
+            padding: 10px 15px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
+        }
+        
+        .model-option:hover {
+            background-color: #334155;
+        }
+        
+        .model-option i {
+            width: 20px;
+            text-align: center;
         }
         
         .chat-container {
@@ -161,45 +99,81 @@
             max-width: 85%;
             padding: 12px 15px;
             border-radius: 12px;
+            font-size: 15px;
             line-height: 1.4;
-            font-size: 14px;
         }
         
         .user-message {
             align-self: flex-end;
-            background: var(--primary);
+            background-color: #6366f1;
             color: white;
             border-bottom-right-radius: 4px;
         }
         
         .ai-message {
             align-self: flex-start;
-            background: var(--dark);
+            background-color: #1e293b;
             border-bottom-left-radius: 4px;
         }
         
-        .ai-name {
-            font-weight: 500;
-            margin-bottom: 5px;
-            color: var(--primary);
-            font-size: 13px;
-        }
-        
         .message-time {
-            font-size: 10px;
-            color: var(--gray);
+            font-size: 11px;
+            color: #94a3b8;
             margin-top: 5px;
             text-align: right;
         }
         
+        .input-area {
+            padding: 15px;
+            background-color: #1e293b;
+            border-top: 1px solid #334155;
+            display: flex;
+            gap: 10px;
+        }
+        
+        #user-input {
+            flex: 1;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 12px 15px;
+            color: #f8fafc;
+            font-size: 15px;
+            resize: none;
+            max-height: 120px;
+        }
+        
+        #user-input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        #send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        #send-btn:disabled {
+            background-color: #334155;
+            cursor: not-allowed;
+        }
+        
         .typing-indicator {
-            display: none;
             align-self: flex-start;
-            background: var(--dark);
+            background-color: #1e293b;
             padding: 12px 15px;
             border-radius: 12px;
             border-bottom-left-radius: 4px;
-            font-size: 14px;
+            display: none;
         }
         
         .typing-dots {
@@ -208,9 +182,9 @@
         }
         
         .typing-dots span {
-            width: 6px;
-            height: 6px;
-            background: var(--gray);
+            width: 8px;
+            height: 8px;
+            background-color: #94a3b8;
             border-radius: 50%;
             animation: bounce 1s infinite;
         }
@@ -227,204 +201,105 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-3px); }
         }
-        
-        /* Input Area - Always Visible */
-        .input-area {
-            padding: 10px;
-            background: var(--dark);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .input-wrapper {
-            flex: 1;
-            background: var(--darker);
-            border-radius: 20px;
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        #user-input {
-            width: 100%;
-            border: none;
-            background: none;
-            color: var(--light);
-            outline: none;
-            font-size: 14px;
-            resize: none;
-            max-height: 100px;
-        }
-        
-        #send-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        
-        #send-btn:disabled {
-            background: var(--gray);
-            cursor: not-allowed;
-        }
-        
-        /* Overlay for sidebar */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 99;
-            display: none;
-        }
-        
-        .overlay.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar for model selection -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">M</div>
-                <div class="sidebar-title">Select Model</div>
-            </div>
-            
-            <div class="model-list">
-                <!-- Text Models -->
-                <div class="model-item active" data-model="gpt4o">
-                    <div class="model-icon"><i class="fas fa-robot"></i></div>
-                    <div class="model-name">GPT-4o</div>
+    <div class="header">
+        <div class="logo">Marisel AI</div>
+        <div class="model-selector">
+            <button class="model-btn" id="model-btn">
+                <span id="current-model">GPT-4o</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="model-dropdown" id="model-dropdown">
+                <div class="model-option" data-model="gpt4o">
+                    <i class="fas fa-robot"></i>
+                    <span>GPT-4o</span>
                 </div>
-                <div class="model-item" data-model="qwen">
-                    <div class="model-icon"><i class="fas fa-brain"></i></div>
-                    <div class="model-name">Qwen</div>
+                <div class="model-option" data-model="qwen">
+                    <i class="fas fa-brain"></i>
+                    <span>Qwen</span>
                 </div>
-                <div class="model-item" data-model="groq-beta">
-                    <div class="model-icon"><i class="fas fa-bolt"></i></div>
-                    <div class="model-name">Groq Beta</div>
+                <div class="model-option" data-model="groq-beta">
+                    <i class="fas fa-bolt"></i>
+                    <span>Groq Beta</span>
                 </div>
-                <div class="model-item" data-model="meta-llama">
-                    <div class="model-icon"><i class="fas fa-horse-head"></i></div>
-                    <div class="model-name">Meta Llama</div>
+                <div class="model-option" data-model="meta-llama">
+                    <i class="fas fa-horse-head"></i>
+                    <span>Meta Llama</span>
                 </div>
-                <div class="model-item" data-model="gemma">
-                    <div class="model-icon"><i class="fas fa-gem"></i></div>
-                    <div class="model-name">Gemma</div>
+                <div class="model-option" data-model="gemma">
+                    <i class="fas fa-gem"></i>
+                    <span>Gemma</span>
                 </div>
-                
-                <!-- Image Models -->
-                <div class="model-item" data-model="deepimg">
-                    <div class="model-icon"><i class="fas fa-image"></i></div>
-                    <div class="model-name">Deep Image</div>
+                <div class="model-option" data-model="deepimg">
+                    <i class="fas fa-image"></i>
+                    <span>Deep Image</span>
                 </div>
-                <div class="model-item" data-model="fluximg">
-                    <div class="model-icon"><i class="fas fa-magic"></i></div>
-                    <div class="model-name">Flux Image</div>
+                <div class="model-option" data-model="fluximg">
+                    <i class="fas fa-magic"></i>
+                    <span>Flux Image</span>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <div class="chat-container" id="chat-container">
+        <div class="message ai-message">
+            Hello! I'm your AI assistant. Select a model from the dropdown above and start chatting!
+            <div class="message-time" id="current-time"></div>
+        </div>
         
-        <!-- Overlay -->
-        <div class="overlay" id="overlay"></div>
-        
-        <!-- Main Chat Area -->
-        <div class="chat-area">
-            <div class="header">
-                <button class="menu-btn" id="menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="current-model">
-                    <span id="current-model-name">GPT-4o</span>
-                </div>
-            </div>
-            
-            <div class="chat-container" id="chat-container">
-                <div class="message ai-message">
-                    <div class="ai-name">Marisel AI</div>
-                    Hello! I'm your AI assistant. Select a model from the menu and start chatting!
-                    <div class="message-time" id="current-time"></div>
-                </div>
-                
-                <div class="typing-indicator" id="typing-indicator">
-                    <div class="typing-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Input Area (Always visible) -->
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
-                </div>
-                <button id="send-btn" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
+    </div>
+    
+    <div class="input-area">
+        <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
+        <button id="send-btn" disabled>
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const sidebar = document.getElementById('sidebar');
-            const menuBtn = document.getElementById('menu-btn');
-            const overlay = document.getElementById('overlay');
-            const modelItems = document.querySelectorAll('.model-item');
-            const currentModelName = document.getElementById('current-model-name');
+            // DOM elements
+            const modelBtn = document.getElementById('model-btn');
+            const modelDropdown = document.getElementById('model-dropdown');
+            const currentModel = document.getElementById('current-model');
             const chatContainer = document.getElementById('chat-container');
             const userInput = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
             const typingIndicator = document.getElementById('typing-indicator');
             
-            // Current model
-            let currentModel = 'gpt4o';
+            // Current model state
+            let selectedModel = 'gpt4o';
             
-            // Toggle sidebar
-            menuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
+            // Toggle model dropdown
+            modelBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                modelDropdown.classList.toggle('show');
             });
             
-            // Close sidebar when clicking overlay
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                modelDropdown.classList.remove('show');
             });
             
             // Model selection
-            modelItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Update active state
-                    modelItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update current model
-                    currentModel = this.dataset.model;
-                    currentModelName.textContent = this.querySelector('.model-name').textContent;
-                    
-                    // Close sidebar
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('active');
+            document.querySelectorAll('.model-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectedModel = this.dataset.model;
+                    currentModel.textContent = this.querySelector('span').textContent;
+                    modelDropdown.classList.remove('show');
                     
                     // Update placeholder for image models
-                    if (currentModel.includes('img')) {
+                    if (selectedModel.includes('img')) {
                         userInput.placeholder = "Describe the image you want...";
                     } else {
                         userInput.placeholder = "Type your message...";
@@ -458,26 +333,17 @@
                 const messageDiv = document.createElement('div');
                 messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
                 
-                if (!isUser) {
-                    const aiName = document.createElement('div');
-                    aiName.className = 'ai-name';
-                    aiName.textContent = 'Marisel AI';
-                    messageDiv.appendChild(aiName);
-                }
-                
-                const messageText = document.createElement('div');
-                messageText.textContent = text;
-                messageDiv.appendChild(messageText);
+                messageDiv.textContent = text;
                 
                 // For image models
-                if (!isUser && currentModel.includes('img') && (text.startsWith('http') || text.startsWith('https'))) {
-                    messageText.textContent = '';
+                if (!isUser && selectedModel.includes('img') && (text.startsWith('http') || text.startsWith('https'))) {
+                    messageDiv.textContent = '';
                     const img = document.createElement('img');
                     img.src = text;
                     img.style.maxWidth = '100%';
                     img.style.borderRadius = '8px';
                     img.style.marginTop = '10px';
-                    messageText.appendChild(img);
+                    messageDiv.appendChild(img);
                 }
                 
                 const timeDiv = document.createElement('div');
@@ -498,7 +364,7 @@
                     const encodedPrompt = encodeURIComponent(prompt);
                     
                     // Select API based on current model
-                    switch(currentModel) {
+                    switch(selectedModel) {
                         case 'gpt4o':
                             apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedPrompt}`;
                             break;
@@ -564,4 +430,4 @@
         });
     </script>
 </body>
-                                       </html>
+</html>
