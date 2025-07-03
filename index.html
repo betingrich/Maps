@@ -3,37 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marisel AI - Advanced AI Assistant</title>
+    <title>Marisel AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
         
         :root {
             --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #10b981;
             --dark: #1e293b;
             --darker: #0f172a;
             --light: #f8fafc;
             --gray: #94a3b8;
-            --dark-gray: #64748b;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-            
-            --user-bubble: var(--primary);
-            --ai-bubble: var(--dark);
-            --bg-color: var(--darker);
-            --text-light: var(--light);
-            --text-dark: var(--dark);
-            --time-color: var(--gray);
-            --icon-color: var(--dark-gray);
-            --icon-hover: var(--primary);
-            --input-bg: var(--dark);
-            
-            --sidebar-width: 280px;
-            --header-height: 70px;
         }
         
         * {
@@ -44,458 +24,195 @@
         }
         
         body {
-            background-color: var(--bg-color);
-            color: var(--text-light);
+            background-color: var(--darker);
+            color: var(--light);
             height: 100vh;
-            display: flex;
             overflow: hidden;
         }
         
-        /* Sidebar Styles */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--dark);
-            height: 100vh;
-            overflow-y: auto;
-            transition: all 0.3s ease;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        /* Mobile Layout */
+        .app-container {
             display: flex;
-            flex-direction: column;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 0;
+            background-color: var(--dark);
+            height: 100%;
+            overflow-y: auto;
+            transition: 0.3s;
+            position: fixed;
+            z-index: 100;
+        }
+        
+        .sidebar.open {
+            width: 250px;
         }
         
         .sidebar-header {
-            padding: 20px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 10px;
         }
         
         .logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 10px;
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
             color: white;
-            font-size: 18px;
+            font-weight: bold;
         }
         
         .sidebar-title {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 16px;
         }
         
-        .sidebar-menu {
-            padding: 15px 0;
-            flex: 1;
-            overflow-y: auto;
+        .model-list {
+            padding: 10px 0;
         }
         
-        .menu-section {
-            margin-bottom: 20px;
-        }
-        
-        .menu-title {
-            padding: 0 20px 10px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--gray);
+        .model-item {
+            padding: 12px 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-        }
-        
-        .menu-items {
-            list-style: none;
-        }
-        
-        .menu-item {
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            gap: 10px;
             cursor: pointer;
-            transition: all 0.2s;
             border-left: 3px solid transparent;
         }
         
-        .menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        
-        .menu-item.active {
-            background-color: rgba(99, 102, 241, 0.1);
+        .model-item.active {
+            background: rgba(99, 102, 241, 0.1);
             border-left-color: var(--primary);
         }
         
-        .menu-item i {
+        .model-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .model-icon {
             width: 20px;
             text-align: center;
             color: var(--gray);
         }
         
-        .menu-item.active i {
+        .model-item.active .model-icon {
             color: var(--primary);
         }
         
-        .menu-item-text {
-            flex: 1;
-        }
-        
-        .menu-item.active .menu-item-text {
-            color: var(--primary);
-            font-weight: 500;
-        }
-        
-        .sidebar-footer {
-            padding: 15px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-        
-        .user-info {
-            flex: 1;
-        }
-        
-        .user-name {
+        .model-name {
             font-size: 14px;
-            font-weight: 500;
         }
         
-        .user-email {
-            font-size: 12px;
-            color: var(--gray);
-        }
-        
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 0;
-            transition: all 0.2s;
-        }
-        
-        .logout-btn:hover {
-            color: var(--danger);
-        }
-        
-        /* Main Content Styles */
-        .main-content {
+        /* Main Chat Area */
+        .chat-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
         
         .header {
-            height: var(--header-height);
-            background-color: var(--dark);
-            padding: 0 20px;
+            padding: 15px;
+            background: var(--dark);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .menu-toggle {
-            display: none;
+        .menu-btn {
             background: none;
             border: none;
-            color: var(--gray);
+            color: var(--light);
             font-size: 20px;
             cursor: pointer;
         }
         
-        .chat-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        
-        .model-selector {
-            background-color: rgba(99, 102, 241, 0.1);
+        .current-model {
+            background: rgba(99, 102, 241, 0.1);
             color: var(--primary);
-            border: none;
+            padding: 5px 12px;
             border-radius: 20px;
-            padding: 6px 15px;
             font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
+            gap: 5px;
         }
         
-        .model-selector:hover {
-            background-color: rgba(99, 102, 241, 0.2);
-        }
-        
-        .model-selector i {
-            font-size: 12px;
-        }
-        
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .header-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-        
-        .header-btn:hover {
-            color: var(--primary);
-        }
-        
-        .header-btn .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        
-        /* Chat Container Styles */
         .chat-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            background-color: var(--darker);
-            position: relative;
-        }
-        
-        .welcome-message {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 0;
-        }
-        
-        .welcome-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .welcome-subtitle {
-            font-size: 16px;
-            color: var(--gray);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .model-cards {
-            display: flex;
-            flex-wrap: wrap;
             gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        
-        .model-card {
-            background-color: var(--dark);
-            border-radius: 10px;
-            padding: 15px;
-            width: calc(33.333% - 10px);
-            min-width: 200px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .model-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            border-color: var(--primary);
-        }
-        
-        .model-card.active {
-            border-color: var(--primary);
-            background-color: rgba(99, 102, 241, 0.1);
-        }
-        
-        .model-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background-color: rgba(99, 102, 241, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        
-        .model-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .model-desc {
-            font-size: 12px;
-            color: var(--gray);
-            line-height: 1.5;
         }
         
         .message {
-            max-width: 80%;
-            padding: 15px 20px;
+            max-width: 85%;
+            padding: 12px 15px;
             border-radius: 12px;
-            line-height: 1.6;
-            position: relative;
-            word-wrap: break-word;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            line-height: 1.4;
+            font-size: 14px;
         }
         
         .user-message {
             align-self: flex-end;
-            background-color: var(--user-bubble);
+            background: var(--primary);
             color: white;
             border-bottom-right-radius: 4px;
         }
         
         .ai-message {
             align-self: flex-start;
-            background-color: var(--ai-bubble);
-            color: var(--text-light);
+            background: var(--dark);
             border-bottom-left-radius: 4px;
         }
         
-        .message-time {
-            font-size: 11px;
-            color: var(--time-color);
-            margin-top: 8px;
-            text-align: right;
-        }
-        
         .ai-name {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 5px;
             color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 13px;
         }
         
-        .ai-model {
-            font-size: 11px;
-            background-color: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-        
-        .action-icons {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-            padding-left: 5px;
-        }
-        
-        .action-icon {
-            color: var(--icon-color);
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .action-icon:hover {
-            color: var(--icon-hover);
-        }
-        
-        .action-icon.active {
-            color: var(--primary);
+        .message-time {
+            font-size: 10px;
+            color: var(--gray);
+            margin-top: 5px;
+            text-align: right;
         }
         
         .typing-indicator {
             display: none;
             align-self: flex-start;
-            background-color: var(--ai-bubble);
-            color: var(--text-light);
-            padding: 12px 20px;
+            background: var(--dark);
+            padding: 12px 15px;
             border-radius: 12px;
             border-bottom-left-radius: 4px;
-            margin-bottom: 20px;
-        }
-        
-        .typing-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 14px;
         }
         
         .typing-dots {
             display: inline-flex;
-            align-items: center;
             gap: 4px;
         }
         
         .typing-dots span {
-            height: 8px;
-            width: 8px;
-            background-color: var(--gray);
+            width: 6px;
+            height: 6px;
+            background: var(--gray);
             border-radius: 50%;
-            display: inline-block;
-            animation: bounce 1.5s infinite ease-in-out;
+            animation: bounce 1s infinite;
         }
         
         .typing-dots span:nth-child(2) {
@@ -507,731 +224,237 @@
         }
         
         @keyframes bounce {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-4px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
         }
         
-        .image-result {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .download-btn {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-top: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        
-        .download-btn:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        /* Input Container Styles */
-        .input-container {
-            padding: 15px;
-            background-color: var(--dark);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        /* Input Area - Always Visible */
+        .input-area {
+            padding: 10px;
+            background: var(--dark);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .input-wrapper {
-            display: flex;
-            align-items: flex-end;
-            background-color: var(--input-bg);
-            border-radius: 12px;
+            flex: 1;
+            background: var(--darker);
+            border-radius: 20px;
             padding: 8px 15px;
-            min-height: 50px;
-            max-height: 150px;
-            overflow-y: auto;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        
-        .input-wrapper:focus-within {
-            border-color: var(--primary);
+            display: flex;
+            align-items: center;
         }
         
         #user-input {
             width: 100%;
             border: none;
+            background: none;
+            color: var(--light);
             outline: none;
-            font-size: 15px;
-            background: transparent;
-            color: white;
+            font-size: 14px;
             resize: none;
             max-height: 100px;
-            padding: 8px 0;
-            line-height: 1.6;
         }
         
-        #user-input::placeholder {
-            color: var(--gray);
-        }
-        
-        .input-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 10px;
-            flex-shrink: 0;
-        }
-        
-        .input-action-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.2s;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        #send-btn {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-        }
-        
-        .input-action-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--primary);
-        }
-        
-        #send-button {
-            background-color: var(--primary);
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 42px;
-            height: 42px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             flex-shrink: 0;
         }
         
-        #send-button:hover {
-            background-color: var(--primary-dark);
-            transform: scale(1.05);
-        }
-        
-        #send-button:disabled {
-            background-color: var(--dark-gray);
+        #send-btn:disabled {
+            background: var(--gray);
             cursor: not-allowed;
-            transform: none;
         }
         
-        /* Model Selector Dropdown */
-        .model-dropdown {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            background-color: var(--dark);
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            z-index: 100;
-            padding: 15px;
+        /* Overlay for sidebar */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
             display: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .model-dropdown.show {
+        .overlay.active {
             display: block;
-        }
-        
-        .dropdown-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .dropdown-title {
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .close-dropdown {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            font-size: 18px;
-        }
-        
-        .model-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
-        .model-option {
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .model-option:hover {
-            background-color: rgba(99, 102, 241, 0.1);
-            border-color: var(--primary);
-        }
-        
-        .model-option.active {
-            background-color: rgba(99, 102, 241, 0.2);
-            border-color: var(--primary);
-        }
-        
-        .model-option-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            background-color: rgba(99, 102, 241, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-        
-        .model-option-name {
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 3px;
-        }
-        
-        .model-option-desc {
-            font-size: 11px;
-            color: var(--gray);
-        }
-        
-        /* Ad Container */
-        .ad-container {
-            background-color: var(--dark);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px auto;
-            max-width: 800px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .ad-text {
-            font-size: 13px;
-            color: var(--gray);
-            margin-bottom: 10px;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 1200px) {
-            .model-card {
-                width: calc(50% - 10px);
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .sidebar {
-                position: absolute;
-                left: -100%;
-                z-index: 1000;
-            }
-            
-            .sidebar.show {
-                left: 0;
-            }
-            
-            .menu-toggle {
-                display: block;
-            }
-            
-            .model-card {
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            :root {
-                --sidebar-width: 260px;
-                --header-height: 60px;
-            }
-            
-            .message {
-                max-width: 90%;
-                padding: 12px 15px;
-            }
-            
-            .header {
-                padding: 0 15px;
-            }
-            
-            .chat-container {
-                padding: 15px;
-            }
-            
-            .welcome-title {
-                font-size: 24px;
-            }
-            
-            .model-dropdown {
-                width: 280px;
-            }
-            
-            .model-options {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .input-actions {
-                display: none;
-            }
-            
-            .header-actions {
-                gap: 10px;
-            }
-            
-            .model-selector span {
-                display: none;
-            }
-            
-            .model-selector i {
-                margin-right: 0;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">🤖</div>
-            <div class="sidebar-title">Marisel AI</div>
-        </div>
-        
-        <div class="sidebar-menu">
-            <div class="menu-section">
-                <div class="menu-title">AI Models</div>
-                <ul class="menu-items">
-                    <li class="menu-item active" data-model="gpt4o">
-                        <i class="fas fa-robot"></i>
-                        <span class="menu-item-text">GPT-4o</span>
-                    </li>
-                    <li class="menu-item" data-model="qwen">
-                        <i class="fas fa-brain"></i>
-                        <span class="menu-item-text">Qwen</span>
-                    </li>
-                    <li class="menu-item" data-model="groq-beta">
-                        <i class="fas fa-bolt"></i>
-                        <span class="menu-item-text">Groq Beta</span>
-                    </li>
-                    <li class="menu-item" data-model="meta-llama">
-                        <i class="fas fa-horse-head"></i>
-                        <span class="menu-item-text">Meta Llama</span>
-                    </li>
-                    <li class="menu-item" data-model="gemma">
-                        <i class="fas fa-gem"></i>
-                        <span class="menu-item-text">Gemma</span>
-                    </li>
-                </ul>
+    <div class="app-container">
+        <!-- Sidebar for model selection -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">M</div>
+                <div class="sidebar-title">Select Model</div>
             </div>
             
-            <div class="menu-section">
-                <div class="menu-title">Image Generation</div>
-                <ul class="menu-items">
-                    <li class="menu-item" data-model="deepimg">
-                        <i class="fas fa-image"></i>
-                        <span class="menu-item-text">Deep Image</span>
-                    </li>
-                    <li class="menu-item" data-model="fluximg">
-                        <i class="fas fa-magic"></i>
-                        <span class="menu-item-text">Flux Image</span>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="menu-section">
-                <div class="menu-title">Other Tools</div>
-                <ul class="menu-items">
-                    <li class="menu-item">
-                        <i class="fas fa-history"></i>
-                        <span class="menu-item-text">Chat History</span>
-                    </li>
-                    <li class="menu-item">
-                        <i class="fas fa-cog"></i>
-                        <span class="menu-item-text">Settings</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="user-avatar">U</div>
-                <div class="user-info">
-                    <div class="user-name">User Account</div>
-                    <div class="user-email">user@example.com</div>
+            <div class="model-list">
+                <!-- Text Models -->
+                <div class="model-item active" data-model="gpt4o">
+                    <div class="model-icon"><i class="fas fa-robot"></i></div>
+                    <div class="model-name">GPT-4o</div>
+                </div>
+                <div class="model-item" data-model="qwen">
+                    <div class="model-icon"><i class="fas fa-brain"></i></div>
+                    <div class="model-name">Qwen</div>
+                </div>
+                <div class="model-item" data-model="groq-beta">
+                    <div class="model-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="model-name">Groq Beta</div>
+                </div>
+                <div class="model-item" data-model="meta-llama">
+                    <div class="model-icon"><i class="fas fa-horse-head"></i></div>
+                    <div class="model-name">Meta Llama</div>
+                </div>
+                <div class="model-item" data-model="gemma">
+                    <div class="model-icon"><i class="fas fa-gem"></i></div>
+                    <div class="model-name">Gemma</div>
+                </div>
+                
+                <!-- Image Models -->
+                <div class="model-item" data-model="deepimg">
+                    <div class="model-icon"><i class="fas fa-image"></i></div>
+                    <div class="model-name">Deep Image</div>
+                </div>
+                <div class="model-item" data-model="fluximg">
+                    <div class="model-icon"><i class="fas fa-magic"></i></div>
+                    <div class="model-name">Flux Image</div>
                 </div>
             </div>
-            <button class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
         </div>
-    </div>
-    
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-left">
-                <button class="menu-toggle" id="menu-toggle">
+        
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+        
+        <!-- Main Chat Area -->
+        <div class="chat-area">
+            <div class="header">
+                <button class="menu-btn" id="menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="chat-title">Marisel AI</div>
-            </div>
-            
-            <div class="header-actions">
-                <button class="model-selector" id="model-selector">
-                    <span>GPT-4o</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                
-                <div class="model-dropdown" id="model-dropdown">
-                    <div class="dropdown-header">
-                        <div class="dropdown-title">Select AI Model</div>
-                        <button class="close-dropdown" id="close-dropdown">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="model-options">
-                        <div class="model-option active" data-model="gpt4o">
-                            <div class="model-option-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="model-option-name">GPT-4o</div>
-                            <div class="model-option-desc">Most advanced model</div>
-                        </div>
-                        <div class="model-option" data-model="qwen">
-                            <div class="model-option-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <div class="model-option-name">Qwen</div>
-                            <div class="model-option-desc">Alibaba's AI model</div>
-                        </div>
-                        <div class="model-option" data-model="groq-beta">
-                            <div class="model-option-icon">
-                                <i class="fas fa-bolt"></i>
-                            </div>
-                            <div class="model-option-name">Groq Beta</div>
-                            <div class="model-option-desc">Ultra-fast responses</div>
-                        </div>
-                        <div class="model-option" data-model="meta-llama">
-                            <div class="model-option-icon">
-                                <i class="fas fa-horse-head"></i>
-                            </div>
-                            <div class="model-option-name">Meta Llama</div>
-                            <div class="model-option-desc">Open-source model</div>
-                        </div>
-                        <div class="model-option" data-model="gemma">
-                            <div class="model-option-icon">
-                                <i class="fas fa-gem"></i>
-                            </div>
-                            <div class="model-option-name">Gemma</div>
-                            <div class="model-option-desc">Google's lightweight model</div>
-                        </div>
-                        <div class="model-option" data-model="deepimg">
-                            <div class="model-option-icon">
-                                <i class="fas fa-image"></i>
-                            </div>
-                            <div class="model-option-name">Deep Image</div>
-                            <div class="model-option-desc">AI image generation</div>
-                        </div>
-                        <div class="model-option" data-model="fluximg">
-                            <div class="model-option-icon">
-                                <i class="fas fa-magic"></i>
-                            </div>
-                            <div class="model-option-name">Flux Image</div>
-                            <div class="model-option-desc">Creative image AI</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="header-btn">
-                    <i class="fas fa-history"></i>
-                </button>
-                <button class="header-btn">
-                    <i class="fas fa-cog"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Chat Container -->
-        <div class="chat-container" id="chat-container">
-            <div class="welcome-message">
-                <h1 class="welcome-title">Welcome to Marisel AI</h1>
-                <p class="welcome-subtitle">
-                    Your advanced AI assistant powered by multiple state-of-the-art models. 
-                    Ask questions, generate content, create images, and more with our powerful AI technologies.
-                </p>
-                
-                <div class="model-cards">
-                    <div class="model-card active" data-model="gpt4o">
-                        <div class="model-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <h3 class="model-name">GPT-4o</h3>
-                        <p class="model-desc">
-                            OpenAI's most advanced model with multimodal capabilities and human-level performance.
-                        </p>
-                    </div>
-                    <div class="model-card" data-model="qwen">
-                        <div class="model-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3 class="model-name">Qwen</h3>
-                        <p class="model-desc">
-                            Alibaba's large language model with strong reasoning and multilingual capabilities.
-                        </p>
-                    </div>
-                    <div class="model-card" data-model="groq-beta">
-                        <div class="model-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <h3 class="model-name">Groq Beta</h3>
-                        <p class="model-desc">
-                            Ultra-fast responses powered by Groq's custom LPU inference engine.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="ad-container">
-                    <p class="ad-text">Advertisement</p>
-                    <!-- Google AdSense -->
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                         data-ad-slot="XXXXXXXXXX"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
+                <div class="current-model">
+                    <span id="current-model-name">GPT-4o</span>
                 </div>
             </div>
             
-            <div class="message ai-message">
-                <div class="ai-name">
-                    Marisel AI
-                    <span class="ai-model">GPT-4o</span>
+            <div class="chat-container" id="chat-container">
+                <div class="message ai-message">
+                    <div class="ai-name">Marisel AI</div>
+                    Hello! I'm your AI assistant. Select a model from the menu and start chatting!
+                    <div class="message-time" id="current-time"></div>
                 </div>
-                Hello! I'm Marisel AI, your advanced conversational assistant powered by multiple AI models. How can I help you today?
-                <div class="action-icons">
-                    <i class="fas fa-copy action-icon" title="Copy"></i>
-                    <i class="fas fa-sync-alt action-icon" title="Regenerate"></i>
-                    <i class="far fa-thumbs-up action-icon" title="Like"></i>
-                    <i class="far fa-thumbs-down action-icon" title="Dislike"></i>
-                </div>
-                <div class="message-time" id="current-time"></div>
-            </div>
-            
-            <div class="typing-indicator" id="typing-indicator">
-                <div class="typing-content">
+                
+                <div class="typing-indicator" id="typing-indicator">
                     <div class="typing-dots">
                         <span></span>
                         <span></span>
                         <span></span>
                     </div>
-                    <span>Marisel AI is typing...</span>
                 </div>
             </div>
-        </div>
-        
-        <!-- Input Container -->
-        <div class="input-container">
-            <div class="input-wrapper">
-                <textarea id="user-input" placeholder="Message Marisel AI..." rows="1"></textarea>
-                <div class="input-actions">
-                    <button class="input-action-btn" title="Attach file">
-                        <i class="fas fa-paperclip"></i>
-                    </button>
-                    <button class="input-action-btn" title="Record voice">
-                        <i class="fas fa-microphone"></i>
-                    </button>
+            
+            <!-- Input Area (Always visible) -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
                 </div>
+                <button id="send-btn" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
-            <button id="send-button" disabled>
-                <i class="fas fa-paper-plane"></i>
-            </button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.getElementById('menu-btn');
+            const overlay = document.getElementById('overlay');
+            const modelItems = document.querySelectorAll('.model-item');
+            const currentModelName = document.getElementById('current-model-name');
             const chatContainer = document.getElementById('chat-container');
             const userInput = document.getElementById('user-input');
-            const sendButton = document.getElementById('send-button');
+            const sendBtn = document.getElementById('send-btn');
             const typingIndicator = document.getElementById('typing-indicator');
-            const menuToggle = document.getElementById('menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-            const modelSelector = document.getElementById('model-selector');
-            const modelDropdown = document.getElementById('model-dropdown');
-            const closeDropdown = document.getElementById('close-dropdown');
-            const modelOptions = document.querySelectorAll('.model-option');
-            const menuItems = document.querySelectorAll('.menu-item');
-            const modelCards = document.querySelectorAll('.model-card');
             
-            // Current state
+            // Current model
             let currentModel = 'gpt4o';
-            let isImageModel = false;
             
-            // Toggle sidebar on mobile
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('show');
+            // Toggle sidebar
+            menuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
             });
             
-            // Toggle model dropdown
-            modelSelector.addEventListener('click', function(e) {
-                e.stopPropagation();
-                modelDropdown.classList.toggle('show');
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
             });
             
-            closeDropdown.addEventListener('click', function() {
-                modelDropdown.classList.remove('show');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!modelSelector.contains(e.target) {
-                    modelDropdown.classList.remove('show');
-                }
-            });
-            
-            // Select model from dropdown
-            modelOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    const model = this.dataset.model;
-                    selectModel(model);
-                    modelDropdown.classList.remove('show');
-                });
-            });
-            
-            // Select model from sidebar
-            menuItems.forEach(item => {
+            // Model selection
+            modelItems.forEach(item => {
                 item.addEventListener('click', function() {
-                    if (this.dataset.model) {
-                        const model = this.dataset.model;
-                        selectModel(model);
-                        
-                        // Update active state
-                        menuItems.forEach(i => i.classList.remove('active'));
-                        this.classList.add('active');
+                    // Update active state
+                    modelItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update current model
+                    currentModel = this.dataset.model;
+                    currentModelName.textContent = this.querySelector('.model-name').textContent;
+                    
+                    // Close sidebar
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    
+                    // Update placeholder for image models
+                    if (currentModel.includes('img')) {
+                        userInput.placeholder = "Describe the image you want...";
+                    } else {
+                        userInput.placeholder = "Type your message...";
                     }
                 });
             });
-            
-            // Select model from cards
-            modelCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const model = this.dataset.model;
-                    selectModel(model);
-                    
-                    // Update active state
-                    modelCards.forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // Function to handle model selection
-            function selectModel(model) {
-                currentModel = model;
-                isImageModel = model.includes('img');
-                
-                // Update model selector text
-                let modelName = '';
-                switch(model) {
-                    case 'gpt4o':
-                        modelName = 'GPT-4o';
-                        break;
-                    case 'qwen':
-                        modelName = 'Qwen';
-                        break;
-                    case 'groq-beta':
-                        modelName = 'Groq Beta';
-                        break;
-                    case 'meta-llama':
-                        modelName = 'Meta Llama';
-                        break;
-                    case 'gemma':
-                        modelName = 'Gemma';
-                        break;
-                    case 'deepimg':
-                        modelName = 'Deep Image';
-                        break;
-                    case 'fluximg':
-                        modelName = 'Flux Image';
-                        break;
-                    default:
-                        modelName = 'GPT-4o';
-                }
-                
-                modelSelector.querySelector('span').textContent = modelName;
-                
-                // Update placeholder based on model type
-                userInput.placeholder = isImageModel ? 
-                    'Describe the image you want to generate...' : 
-                    'Message Marisel AI...';
-                
-                // Add a system message about the model change
-                addMessage(`Switched to ${modelName} model. ${isImageModel ? 
-                    'Describe the image you want to generate.' : 
-                    'How can I help you?'}`, false, modelName);
-            }
             
             // Auto-resize textarea
             userInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
-                
-                // Disable send button if empty
-                sendButton.disabled = this.value.trim() === '';
+                sendBtn.disabled = this.value.trim() === '';
             });
             
-            // Function to get current time in HH:MM AM/PM format
+            // Get current time
             function getCurrentTime() {
                 const now = new Date();
                 let hours = now.getHours();
                 const minutes = now.getMinutes().toString().padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
-                hours = hours ? hours : 12; // the hour '0' should be '12'
+                hours = hours ? hours : 12;
                 return `${hours}:${minutes} ${ampm}`;
             }
             
             // Set initial time
             document.getElementById('current-time').textContent = getCurrentTime();
             
-            // Function to add a message to the chat
-            function addMessage(text, isUser, modelName = null) {
-                // Hide welcome message when first user message is sent
-                const welcomeMessage = document.querySelector('.welcome-message');
-                if (welcomeMessage && isUser) {
-                    welcomeMessage.style.display = 'none';
-                }
-                
+            // Add message to chat
+            function addMessage(text, isUser) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
                 
@@ -1239,101 +462,22 @@
                     const aiName = document.createElement('div');
                     aiName.className = 'ai-name';
                     aiName.textContent = 'Marisel AI';
-                    
-                    if (modelName) {
-                        const aiModel = document.createElement('span');
-                        aiModel.className = 'ai-model';
-                        aiModel.textContent = modelName;
-                        aiName.appendChild(aiModel);
-                    }
-                    
                     messageDiv.appendChild(aiName);
                 }
                 
                 const messageText = document.createElement('div');
+                messageText.textContent = text;
+                messageDiv.appendChild(messageText);
                 
-                // Check if the response is an image URL
-                if (!isUser && isImageModel && (text.startsWith('http') || text.startsWith('https'))) {
-                    const imgContainer = document.createElement('div');
-                    
+                // For image models
+                if (!isUser && currentModel.includes('img') && (text.startsWith('http') || text.startsWith('https'))) {
+                    messageText.textContent = '';
                     const img = document.createElement('img');
                     img.src = text;
-                    img.className = 'image-result';
-                    img.alt = 'Generated image';
-                    img.onerror = function() {
-                        this.style.display = 'none';
-                        messageText.textContent = 'Failed to load the generated image.';
-                    };
-                    
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = text;
-                    downloadLink.className = 'download-btn';
-                    downloadLink.download = 'marisel-ai-image-' + Date.now() + '.jpg';
-                    downloadLink.innerHTML = '<i class="fas fa-download"></i> Download Image';
-                    
-                    imgContainer.appendChild(img);
-                    imgContainer.appendChild(document.createElement('br'));
-                    imgContainer.appendChild(downloadLink);
-                    
-                    messageDiv.appendChild(imgContainer);
-                } else {
-                    messageText.textContent = text;
-                    messageDiv.appendChild(messageText);
-                }
-                
-                if (!isUser) {
-                    const actionIcons = document.createElement('div');
-                    actionIcons.className = 'action-icons';
-                    actionIcons.innerHTML = `
-                        <i class="fas fa-copy action-icon" title="Copy"></i>
-                        <i class="fas fa-sync-alt action-icon" title="Regenerate"></i>
-                        <i class="far fa-thumbs-up action-icon" title="Like"></i>
-                        <i class="far fa-thumbs-down action-icon" title="Dislike"></i>
-                    `;
-                    messageDiv.appendChild(actionIcons);
-                    
-                    // Add click handlers for action icons
-                    const copyIcon = actionIcons.querySelector('.fa-copy');
-                    const regenerateIcon = actionIcons.querySelector('.fa-sync-alt');
-                    const likeIcon = actionIcons.querySelector('.fa-thumbs-up');
-                    const dislikeIcon = actionIcons.querySelector('.fa-thumbs-down');
-                    
-                    copyIcon.addEventListener('click', function() {
-                        navigator.clipboard.writeText(text);
-                        this.classList.add('active');
-                        setTimeout(() => {
-                            this.classList.remove('active');
-                        }, 1000);
-                    });
-                    
-                    regenerateIcon.addEventListener('click', async function() {
-                        this.classList.add('active');
-                        const lastUserMessage = document.querySelector('.user-message:last-child');
-                        if (lastUserMessage) {
-                            const question = lastUserMessage.textContent.trim();
-                            const aiResponse = await getAIResponse(question, currentModel);
-                            
-                            if (isImageModel && (aiResponse.startsWith('http') || aiResponse.startsWith('https'))) {
-                                messageDiv.querySelector('img').src = aiResponse;
-                                messageDiv.querySelector('a').href = aiResponse;
-                            } else {
-                                messageText.textContent = aiResponse;
-                            }
-                        }
-                        setTimeout(() => {
-                            this.classList.remove('active');
-                        }, 1000);
-                    });
-                    
-                    likeIcon.addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        dislikeIcon.classList.remove('active');
-                    });
-                    
-                    dislikeIcon.addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        likeIcon.classList.remove('active');
-                    });
+                    img.style.maxWidth = '100%';
+                    img.style.borderRadius = '8px';
+                    img.style.marginTop = '10px';
+                    messageText.appendChild(img);
                 }
                 
                 const timeDiv = document.createElement('div');
@@ -1345,108 +489,79 @@
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
             
-            // Function to get AI response from API
-            async function getAIResponse(question, model) {
+            // Get AI response
+            async function getAIResponse(prompt) {
                 try {
                     typingIndicator.style.display = 'block';
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
                     
                     let apiUrl = '';
-                    const encodedQuestion = encodeURIComponent(question);
+                    const encodedPrompt = encodeURIComponent(prompt);
                     
-                    // Select API endpoint based on model
-                    switch(model) {
+                    // Select API based on current model
+                    switch(currentModel) {
                         case 'gpt4o':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedPrompt}`;
                             break;
                         case 'qwen':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/qwen?apikey=gifted&q=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/qwen?apikey=gifted&q=${encodedPrompt}`;
                             break;
                         case 'groq-beta':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/groq-beta?apikey=gifted&q=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/groq-beta?apikey=gifted&q=${encodedPrompt}`;
                             break;
                         case 'meta-llama':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/meta-llama?apikey=gifted&q=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/meta-llama?apikey=gifted&q=${encodedPrompt}`;
                             break;
                         case 'gemma':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gemma?apikey=gifted&q=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/gemma?apikey=gifted&q=${encodedPrompt}`;
                             break;
                         case 'deepimg':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepimg?apikey=gifted&prompt=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepimg?apikey=gifted&prompt=${encodedPrompt}`;
                             break;
                         case 'fluximg':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/fluximg?apikey=gifted&prompt=${encodedQuestion}`;
+                            apiUrl = `https://api.giftedtech.web.id/api/ai/fluximg?apikey=gifted&prompt=${encodedPrompt}`;
                             break;
-                        default:
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedQuestion}`;
                     }
                     
                     const response = await fetch(apiUrl);
-                    
-                    if (!response.ok) {
-                        throw new Error(`API request failed with status ${response.status}`);
-                    }
-                    
                     const data = await response.json();
                     
-                    // Handle different response formats
-                    if (data.response) {
-                        return data.response;
-                    } else if (data.answer) {
-                        return data.answer;
-                    } else if (data.message) {
-                        return data.message;
-                    } else if (data.result) {
-                        return data.result;
-                    } else if (typeof data === 'string') {
-                        return data;
-                    } else {
-                        return "I couldn't process that request. Please try again.";
-                    }
+                    return data.response || data.answer || data.message || data.result || "I couldn't process that request.";
                 } catch (error) {
-                    console.error('Error fetching AI response:', error);
-                    return "Sorry, I encountered an error while processing your request. Please try again later.";
+                    console.error('Error:', error);
+                    return "Sorry, there was an error processing your request.";
                 } finally {
                     typingIndicator.style.display = 'none';
                 }
             }
             
-            // Handle send button click
-            sendButton.addEventListener('click', async function() {
-                const question = userInput.value.trim();
-                if (question) {
-                    addMessage(question, true);
-                    userInput.value = '';
-                    userInput.style.height = 'auto';
-                    sendButton.disabled = true;
-                    
-                    const aiResponse = await getAIResponse(question, currentModel);
-                    addMessage(aiResponse, false, currentModel);
-                }
-            });
+            // Send message
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (!message) return;
+                
+                addMessage(message, true);
+                userInput.value = '';
+                userInput.style.height = 'auto';
+                sendBtn.disabled = true;
+                
+                const response = await getAIResponse(message);
+                addMessage(response, false);
+            }
             
-            // Handle Enter key press (Shift+Enter for new line)
-            userInput.addEventListener('keydown', async function(e) {
+            // Send button click
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // Enter key to send
+            userInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    const question = userInput.value.trim();
-                    if (question) {
-                        addMessage(question, true);
-                        userInput.value = '';
-                        userInput.style.height = 'auto';
-                        sendButton.disabled = true;
-                        
-                        const aiResponse = await getAIResponse(question, currentModel);
-                        addMessage(aiResponse, false, currentModel);
-                    }
+                    sendMessage();
                 }
             });
             
-            // Focus the input field on page load
+            // Focus input on load
             userInput.focus();
         });
     </script>
 </body>
-</html>
-            
-  
+                                       </html>
