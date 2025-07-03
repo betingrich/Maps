@@ -13,15 +13,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
         /* Theme colors */
         body.default-theme {
             --bg-color: #0f172a;
@@ -34,6 +25,7 @@
             --user-message-text: white;
             --ai-message-bg: #1e293b;
             --input-bg: #0f172a;
+            --model-icon-color: #6366f1;
         }
         
         body.light-theme {
@@ -43,10 +35,11 @@
             --text-color: #1e293b;
             --accent-color: #6366f1;
             --secondary-text: #64748b;
-            --user-message-bg: #128C7E; /* WhatsApp green */
+            --user-message-bg: #128C7E;
             --user-message-text: white;
             --ai-message-bg: #ffffff;
             --input-bg: #ffffff;
+            --model-icon-color: #6366f1;
         }
         
         body.dark-theme {
@@ -56,10 +49,11 @@
             --text-color: #f8fafc;
             --accent-color: #818cf8;
             --secondary-text: #94a3b8;
-            --user-message-bg: #128C7E; /* WhatsApp green */
+            --user-message-bg: #128C7E;
             --user-message-text: white;
             --ai-message-bg: #1e293b;
             --input-bg: #0f172a;
+            --model-icon-color: #818cf8;
         }
         
         body.blue-theme {
@@ -69,15 +63,20 @@
             --text-color: #ebf8ff;
             --accent-color: #4299e1;
             --secondary-text: #a0aec0;
-            --user-message-bg: #128C7E; /* WhatsApp green */
+            --user-message-bg: #128C7E;
             --user-message-text: white;
             --ai-message-bg: #2a4365;
             --input-bg: #1a365d;
+            --model-icon-color: #4299e1;
         }
         
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         .header {
@@ -105,11 +104,17 @@
             font-size: 20px;
         }
         
-        .model-selector {
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .model-selector, .theme-selector {
             position: relative;
         }
         
-        .model-btn {
+        .model-btn, .theme-btn {
             background-color: var(--header-color);
             color: var(--text-color);
             border: 1px solid var(--border-color);
@@ -123,24 +128,41 @@
             transition: all 0.2s;
         }
         
-        .model-btn:hover {
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .model-btn:hover, .theme-btn:hover {
             border-color: var(--accent-color);
         }
         
-        .model-dropdown {
+        .model-dropdown, .theme-dropdown {
             position: absolute;
             right: 0;
             top: 40px;
             background-color: var(--header-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            width: 220px;
             z-index: 100;
             display: none;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-height: 70vh;
+            overflow-y: auto;
         }
         
-        .model-dropdown.show {
+        .model-dropdown {
+            width: 280px;
+        }
+        
+        .theme-dropdown {
+            width: 160px;
+            padding: 8px 0;
+        }
+        
+        .model-dropdown.show, .theme-dropdown.show {
             display: block;
         }
         
@@ -160,17 +182,50 @@
         .model-option i {
             width: 20px;
             text-align: center;
-            color: var(--accent-color);
+            color: var(--model-icon-color);
         }
         
         .model-option .model-name {
             flex: 1;
+            font-weight: 500;
         }
         
         .model-option .model-desc {
             font-size: 11px;
             color: var(--secondary-text);
             margin-top: 2px;
+        }
+        
+        .model-option .model-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .theme-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        
+        .theme-option:hover {
+            background-color: var(--border-color);
+        }
+        
+        .theme-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+        }
+        
+        .theme-name {
+            font-size: 14px;
         }
         
         .chat-container {
@@ -368,18 +423,41 @@
             color: var(--accent-color);
         }
         
-        .file-preview {
+        .media-preview {
             display: none;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: var(--secondary-text);
-            margin-top: 8px;
+            position: relative;
+            margin-top: 10px;
+            max-width: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
         }
         
-        .remove-file {
-            color: #ef4444;
+        .media-preview img {
+            width: 100%;
+            display: block;
+        }
+        
+        .media-preview-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .media-preview-action {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            font-size: 12px;
         }
         
         #send-btn {
@@ -465,109 +543,48 @@
             transform: translateX(50px);
         }
         
-        /* Theme selector */
-        .theme-selector {
-            position: relative;
-            margin-right: 10px;
-        }
-        
-        .theme-btn {
-            background-color: transparent;
-            color: var(--text-color);
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-        
-        .theme-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .theme-dropdown {
-            position: absolute;
-            right: 0;
-            top: 40px;
-            background-color: var(--header-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            width: 160px;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            padding: 8px 0;
-        }
-        
-        .theme-dropdown.show {
-            display: block;
-        }
-        
-        .theme-option {
-            padding: 8px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-        }
-        
-        .theme-option:hover {
+        /* Model tags */
+        .tag-text {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
             background-color: var(--border-color);
+            color: var(--text-color);
         }
         
-        .theme-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 1px solid var(--border-color);
-        }
-        
-        .theme-name {
-            font-size: 14px;
-        }
-        
-        /* Media upload preview */
-        .media-preview {
-            display: none;
-            position: relative;
-            margin-top: 10px;
-            max-width: 200px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-        
-        .media-preview img {
-            width: 100%;
-            display: block;
-        }
-        
-        .media-preview-actions {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            display: flex;
-            gap: 5px;
-        }
-        
-        .media-preview-action {
-            background-color: rgba(0, 0, 0, 0.6);
+        .tag-text.gpt {
+            background-color: #10a37f;
             color: white;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
+        }
+        
+        .tag-text.gemini {
+            background-color: #fbbc04;
+            color: #202124;
+        }
+        
+        .tag-text.deepseek {
+            background-color: #1e88e5;
+            color: white;
+        }
+        
+        .tag-text.vision {
+            background-color: #8e24aa;
+            color: white;
+        }
+        
+        .tag-text.meta {
+            background-color: #1877f2;
+            color: white;
+        }
+        
+        .tag-text.open-source {
+            background-color: #34a853;
+            color: white;
+        }
+        
+        .tag-text.fast {
+            background-color: #ea4335;
+            color: white;
         }
         
         /* Mobile optimizations */
@@ -577,7 +594,7 @@
             }
             
             .model-dropdown {
-                width: 200px;
+                width: 260px;
             }
             
             .input-area {
@@ -596,7 +613,7 @@
             <i class="fas fa-robot"></i>
             <span>Marisel AI Pro</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="header-controls">
             <div class="theme-selector">
                 <button class="theme-btn" id="theme-btn">
                     <i class="fas fa-palette"></i>
@@ -626,53 +643,118 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="model-dropdown" id="model-dropdown">
+                    <!-- GPT Models -->
                     <div class="model-option" data-model="gpt4o">
                         <i class="fas fa-robot"></i>
                         <div>
-                            <div class="model-name">GPT-4o</div>
-                            <div class="model-desc">Most advanced model</div>
+                            <div class="model-name">GPT-4o <span class="tag-text gpt">GPT</span></div>
+                            <div class="model-desc">Most advanced multimodal model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="gpt4">
+                        <i class="fas fa-brain"></i>
+                        <div>
+                            <div class="model-name">GPT-4 <span class="tag-text gpt">GPT</span></div>
+                            <div class="model-desc">Previous generation GPT model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="gpt4o-mini">
+                        <i class="fas fa-microchip"></i>
+                        <div>
+                            <div class="model-name">GPT-4o Mini <span class="tag-text gpt">GPT</span></div>
+                            <div class="model-desc">Lightweight version of GPT-4o</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gemini Models -->
+                    <div class="model-option" data-model="geminiai">
+                        <i class="fas fa-gem"></i>
+                        <div>
+                            <div class="model-name">Gemini AI <span class="tag-text gemini">Gemini</span></div>
+                            <div class="model-desc">Google's Gemini AI model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="geminiaipro">
+                        <i class="fas fa-gem" style="color: #fbbc04;"></i>
+                        <div>
+                            <div class="model-name">Gemini Pro <span class="tag-text gemini">Gemini</span></div>
+                            <div class="model-desc">Advanced version of Gemini</div>
+                        </div>
+                    </div>
+                    
+                    <!-- DeepSeek Models -->
+                    <div class="model-option" data-model="deepseek-v3">
+                        <i class="fas fa-search"></i>
+                        <div>
+                            <div class="model-name">DeepSeek V3 <span class="tag-text deepseek">DeepSeek</span></div>
+                            <div class="model-desc">Latest DeepSeek model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="deepseek-r1">
+                        <i class="fas fa-search"></i>
+                        <div>
+                            <div class="model-name">DeepSeek R1 <span class="tag-text deepseek">DeepSeek</span></div>
+                            <div class="model-desc">DeepSeek research model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="deepseek-llm">
+                        <i class="fas fa-search"></i>
+                        <div>
+                            <div class="model-name">DeepSeek LLM <span class="tag-text deepseek">DeepSeek</span></div>
+                            <div class="model-desc">DeepSeek language model</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Vision Models -->
+                    <div class="model-option" data-model="vision">
+                        <i class="fas fa-eye"></i>
+                        <div>
+                            <div class="model-name">Vision AI <span class="tag-text vision">Vision</span></div>
+                            <div class="model-desc">Analyze and describe images</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Other Models -->
+                    <div class="model-option" data-model="mistral">
+                        <i class="fas fa-wind"></i>
+                        <div>
+                            <div class="model-name">Mistral <span class="tag-text open-source">Open Source</span></div>
+                            <div class="model-desc">Efficient open-source model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="letmegpt">
+                        <i class="fas fa-comment"></i>
+                        <div>
+                            <div class="model-name">LetMeGPT <span class="tag-text">Chat</span></div>
+                            <div class="model-desc">General purpose chat model</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="chat">
+                        <i class="fas fa-comments"></i>
+                        <div>
+                            <div class="model-name">Chat AI <span class="tag-text">General</span></div>
+                            <div class="model-desc">General purpose AI chat</div>
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="meta-llama">
+                        <i class="fas fa-horse-head"></i>
+                        <div>
+                            <div class="model-name">Meta Llama <span class="tag-text meta">Meta</span></div>
+                            <div class="model-desc">Meta's open-source model</div>
                         </div>
                     </div>
                     <div class="model-option" data-model="qwen">
                         <i class="fas fa-brain"></i>
                         <div>
-                            <div class="model-name">Qwen</div>
+                            <div class="model-name">Qwen <span class="tag-text">Alibaba</span></div>
                             <div class="model-desc">Alibaba's AI model</div>
                         </div>
                     </div>
                     <div class="model-option" data-model="groq-beta">
                         <i class="fas fa-bolt"></i>
                         <div>
-                            <div class="model-name">Groq Beta</div>
+                            <div class="model-name">Groq Beta <span class="tag-text fast">Fast</span></div>
                             <div class="model-desc">Ultra-fast responses</div>
-                        </div>
-                    </div>
-                    <div class="model-option" data-model="meta-llama">
-                        <i class="fas fa-horse-head"></i>
-                        <div>
-                            <div class="model-name">Meta Llama</div>
-                            <div class="model-desc">Open-source model</div>
-                        </div>
-                    </div>
-                    <div class="model-option" data-model="gemma">
-                        <i class="fas fa-gem"></i>
-                        <div>
-                            <div class="model-name">Gemma</div>
-                            <div class="model-desc">Google's lightweight model</div>
-                        </div>
-                    </div>
-                    <div class="model-option" data-model="deepimg">
-                        <i class="fas fa-image"></i>
-                        <div>
-                            <div class="model-name">Deep Image</div>
-                            <div class="model-desc">AI image generation</div>
-                        </div>
-                    </div>
-                    <div class="model-option" data-model="fluximg">
-                        <i class="fas fa-magic"></i>
-                        <div>
-                            <div class="model-name">Flux Image</div>
-                            <div class="model-desc">Creative image AI</div>
                         </div>
                     </div>
                 </div>
@@ -684,7 +766,9 @@
         <div class="message ai-message">
             <div class="message-title">Welcome to Marisel AI Pro</div>
             <div class="message-content">
-                Hello! I'm your advanced AI assistant. Select a model from the dropdown above and start chatting!
+                Hello! I'm your advanced AI assistant with access to multiple powerful models. Select a model from the dropdown above and start chatting!
+                <br><br>
+                <strong>Pro Tip:</strong> Try the Vision AI model to analyze images by uploading them.
             </div>
             <div class="message-footer">
                 <div class="message-time" id="current-time"></div>
@@ -723,7 +807,7 @@
                     <i class="fas fa-paperclip"></i>
                     <span>Attach</span>
                 </label>
-                <input type="file" id="file-upload-input" style="display: none;" accept="image/*, video/*">
+                <input type="file" id="file-upload-input" style="display: none;" accept="image/*">
                 <div class="media-preview" id="media-preview">
                     <img id="preview-image" src="" alt="Preview">
                     <div class="media-preview-actions">
@@ -798,8 +882,10 @@
                     modelDropdown.classList.remove('show');
                     
                     // Update placeholder based on model type
-                    if (selectedModel.includes('img')) {
-                        userInput.placeholder = "Describe the image you want to generate...";
+                    if (selectedModel === 'vision') {
+                        userInput.placeholder = "Upload an image and ask about it...";
+                    } else if (selectedModel.includes('gpt') || selectedModel.includes('gemini')) {
+                        userInput.placeholder = "Ask me anything...";
                     } else {
                         userInput.placeholder = "Type your message...";
                     }
@@ -947,267 +1033,3 @@
                         messageContent.appendChild(textDiv);
                     }
                 } else if (isUser && currentFile) {
-                    // User uploaded non-image file
-                    const fileDiv = document.createElement('div');
-                    fileDiv.style.display = 'flex';
-                    fileDiv.style.alignItems = 'center';
-                    fileDiv.style.gap = '8px';
-                    fileDiv.style.padding = '8px';
-                    fileDiv.style.backgroundColor = 'var(--border-color)';
-                    fileDiv.style.borderRadius = '8px';
-                    fileDiv.style.marginBottom = '10px';
-                    
-                    const icon = document.createElement('i');
-                    icon.className = 'fas fa-file';
-                    icon.style.fontSize = '20px';
-                    
-                    const fileName = document.createElement('span');
-                    fileName.textContent = currentFile.name;
-                    
-                    fileDiv.appendChild(icon);
-                    fileDiv.appendChild(fileName);
-                    
-                    messageContent.appendChild(fileDiv);
-                    
-                    if (text) {
-                        const textDiv = document.createElement('div');
-                        textDiv.textContent = text;
-                        textDiv.style.marginTop = '10px';
-                        messageContent.appendChild(textDiv);
-                    }
-                } else {
-                    // Text response
-                    messageContent.innerHTML = formatMessageContent(text);
-                }
-                
-                messageDiv.appendChild(messageContent);
-                
-                // Message footer
-                const messageFooter = document.createElement('div');
-                messageFooter.className = 'message-footer';
-                
-                const messageTime = document.createElement('div');
-                messageTime.className = 'message-time';
-                messageTime.textContent = getCurrentTime();
-                
-                const messageModel = document.createElement('div');
-                messageModel.className = 'message-model';
-                messageModel.textContent = selectedModel;
-                
-                const messageActions = document.createElement('div');
-                messageActions.className = 'message-actions';
-                
-                if (!isUser) {
-                    const copyAction = document.createElement('div');
-                    copyAction.className = 'message-action';
-                    copyAction.title = 'Copy';
-                    copyAction.innerHTML = '<i class="far fa-copy"></i>';
-                    copyAction.addEventListener('click', function() {
-                        navigator.clipboard.writeText(text);
-                        this.innerHTML = '<i class="fas fa-copy"></i>';
-                        setTimeout(() => {
-                            this.innerHTML = '<i class="far fa-copy"></i>';
-                        }, 1000);
-                    });
-                    
-                    const regenerateAction = document.createElement('div');
-                    regenerateAction.className = 'message-action';
-                    regenerateAction.title = 'Regenerate';
-                    regenerateAction.innerHTML = '<i class="fas fa-redo"></i>';
-                    regenerateAction.addEventListener('click', async function() {
-                        if (isUser) return;
-                        
-                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                        const lastUserMessage = document.querySelector('.user-message:last-child');
-                        
-                        if (lastUserMessage) {
-                            const question = lastUserMessage.querySelector('.message-content').textContent;
-                            const aiResponse = await getAIResponse(question);
-                            
-                            messageContent.innerHTML = formatMessageContent(aiResponse);
-                        }
-                        
-                        this.innerHTML = '<i class="fas fa-redo"></i>';
-                    });
-                    
-                    const likeAction = document.createElement('div');
-                    likeAction.className = 'message-action';
-                    likeAction.title = 'Like';
-                    likeAction.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                    likeAction.addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        this.innerHTML = this.classList.contains('active') ? 
-                            '<i class="fas fa-thumbs-up"></i>' : 
-                            '<i class="far fa-thumbs-up"></i>';
-                    });
-                    
-                    messageActions.appendChild(copyAction);
-                    messageActions.appendChild(regenerateAction);
-                    messageActions.appendChild(likeAction);
-                }
-                
-                messageFooter.appendChild(messageTime);
-                messageFooter.appendChild(messageModel);
-                messageFooter.appendChild(messageActions);
-                
-                messageDiv.appendChild(messageFooter);
-                
-                chatContainer.insertBefore(messageDiv, typingIndicator);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-            
-            // Add swipe events to messages
-            function addSwipeEvents(element) {
-                let touchStartX = 0;
-                let touchEndX = 0;
-                
-                element.addEventListener('touchstart', function(e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, false);
-                
-                element.addEventListener('touchend', function(e) {
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe(element);
-                }, false);
-                
-                // Mouse events for desktop testing
-                element.addEventListener('mousedown', function(e) {
-                    touchStartX = e.clientX;
-                    document.addEventListener('mouseup', function mouseUp(e) {
-                        touchEndX = e.clientX;
-                        handleSwipe(element);
-                        document.removeEventListener('mouseup', mouseUp);
-                    });
-                });
-            }
-            
-            function handleSwipe(element) {
-                const difference = touchStartX - touchEndX;
-                
-                // Swipe left (reply)
-                if (difference > 50) {
-                    element.classList.add('swipe-left');
-                    setTimeout(() => {
-                        element.classList.remove('swipe-left');
-                    }, 300);
-                    
-                    // Focus input and add "Replying to" text
-                    userInput.focus();
-                    const messageText = element.querySelector('.message-content').textContent;
-                    userInput.value = `Replying to: "${messageText.substring(0, 50)}${messageText.length > 50 ? '...' : ''}"\n\n`;
-                    userInput.dispatchEvent(new Event('input'));
-                }
-                // Swipe right (copy)
-                else if (difference < -50) {
-                    element.classList.add('swipe-right');
-                    setTimeout(() => {
-                        element.classList.remove('swipe-right');
-                    }, 300);
-                    
-                    const messageText = element.querySelector('.message-content').textContent;
-                    navigator.clipboard.writeText(messageText);
-                    
-                    // Show copied notification
-                    const notification = document.createElement('div');
-                    notification.textContent = 'Copied to clipboard';
-                    notification.style.position = 'fixed';
-                    notification.style.bottom = '80px';
-                    notification.style.left = '50%';
-                    notification.style.transform = 'translateX(-50%)';
-                    notification.style.backgroundColor = 'var(--accent-color)';
-                    notification.style.color = 'white';
-                    notification.style.padding = '8px 16px';
-                    notification.style.borderRadius = '20px';
-                    notification.style.zIndex = '1000';
-                    document.body.appendChild(notification);
-                    
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 2000);
-                }
-            }
-            
-            // Get AI response
-            async function getAIResponse(prompt) {
-                try {
-                    typingIndicator.style.display = 'block';
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                    
-                    let apiUrl = '';
-                    const encodedPrompt = encodeURIComponent(prompt);
-                    
-                    // Select API based on current model
-                    switch(selectedModel) {
-                        case 'gpt4o':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gpt4o?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'qwen':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/qwen?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'groq-beta':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/groq-beta?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'meta-llama':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/meta-llama?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'gemma':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/gemma?apikey=gifted&q=${encodedPrompt}`;
-                            break;
-                        case 'deepimg':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/deepimg?apikey=gifted&prompt=${encodedPrompt}`;
-                            break;
-                        case 'fluximg':
-                            apiUrl = `https://api.giftedtech.web.id/api/ai/fluximg?apikey=gifted&prompt=${encodedPrompt}`;
-                            break;
-                    }
-                    
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
-                    
-                    return data.response || data.answer || data.message || data.result || "I couldn't process that request.";
-                } catch (error) {
-                    console.error('Error:', error);
-                    return "Sorry, there was an error processing your request.";
-                } finally {
-                    typingIndicator.style.display = 'none';
-                }
-            }
-            
-            // Send message
-            async function sendMessage() {
-                const message = userInput.value.trim();
-                if (!message && !currentFile) return;
-                
-                addMessage(message || (currentFile ? '' : ''), true);
-                userInput.value = '';
-                userInput.style.height = 'auto';
-                
-                if (currentFile) {
-                    fileUploadInput.value = '';
-                    currentFile = null;
-                    mediaPreview.style.display = 'none';
-                }
-                
-                sendBtn.disabled = true;
-                
-                const response = await getAIResponse(message);
-                addMessage(response, false, selectedModel.includes('img'));
-            }
-            
-            // Send button click
-            sendBtn.addEventListener('click', sendMessage);
-            
-            // Enter key to send (Shift+Enter for new line)
-            userInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-            
-            // Focus input on load
-            userInput.focus();
-        });
-    </script>
-</body>
-</html>
