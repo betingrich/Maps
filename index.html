@@ -5,83 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marisel AI Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Rounded:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
-        /* Theme colors */
-        body.default-theme {
-            --bg-color: #0f172a;
-            --header-color: #1e293b;
-            --border-color: #334155;
-            --text-color: #f8fafc;
-            --accent-color: #6366f1;
-            --secondary-text: #94a3b8;
-            --user-message-bg: #128C7E; /* WhatsApp green */
-            --user-message-text: white;
-            --ai-message-bg: #1e293b;
-            --input-bg: #0f172a;
-            --model-icon-color: #6366f1;
-        }
-        
-        body.light-theme {
-            --bg-color: #f8fafc;
-            --header-color: #ffffff;
-            --border-color: #e2e8f0;
-            --text-color: #1e293b;
-            --accent-color: #6366f1;
-            --secondary-text: #64748b;
+        /* iOS 26 Liquid Glass Theme */
+        :root {
+            --glass-blur: 12px;
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --primary-color: #0A84FF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #636366;
             --user-message-bg: #128C7E;
             --user-message-text: white;
-            --ai-message-bg: #ffffff;
-            --input-bg: #ffffff;
-            --model-icon-color: #6366f1;
+            --ai-message-bg: rgba(255, 255, 255, 0.2);
+            --input-bg: rgba(255, 255, 255, 0.15);
+            --model-icon-color: #0A84FF;
+            --border-color: rgba(255, 255, 255, 0.3);
+            --header-color: rgba(255, 255, 255, 0.2);
         }
         
-        body.dark-theme {
-            --bg-color: #0f172a;
-            --header-color: #1e293b;
-            --border-color: #334155;
-            --text-color: #f8fafc;
-            --accent-color: #818cf8;
-            --secondary-text: #94a3b8;
+        [data-theme="dark"] {
+            --glass-bg: rgba(28, 28, 30, 0.3);
+            --glass-border: rgba(44, 44, 46, 0.5);
+            --primary-color: #5E9EFF;
+            --text-primary: #F2F2F7;
+            --text-secondary: #AEAEB2;
             --user-message-bg: #128C7E;
             --user-message-text: white;
-            --ai-message-bg: #1e293b;
-            --input-bg: #0f172a;
-            --model-icon-color: #818cf8;
-        }
-        
-        body.blue-theme {
-            --bg-color: #1a365d;
-            --header-color: #2a4365;
-            --border-color: #2c5282;
-            --text-color: #ebf8ff;
-            --accent-color: #4299e1;
-            --secondary-text: #a0aec0;
-            --user-message-bg: #128C7E;
-            --user-message-text: white;
-            --ai-message-bg: #2a4365;
-            --input-bg: #1a365d;
-            --model-icon-color: #4299e1;
+            --ai-message-bg: rgba(30, 30, 32, 0.3);
+            --input-bg: rgba(30, 30, 32, 0.3);
+            --border-color: rgba(44, 44, 46, 0.5);
+            --header-color: rgba(28, 28, 30, 0.3);
         }
         
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: linear-gradient(135deg, #F5F7FA 0%, #E4E8EB 100%);
+            color: var(--text-primary);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s, color 0.3s;
+            transition: all 0.3s ease;
+        }
+        
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%);
+        }
+        
+        /* Glass Panel Styles */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Dynamic Island */
+        .dynamic-island {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .dynamic-island:hover {
+            width: 150px;
+            background: rgba(0, 0, 0, 0.7);
         }
         
         .header {
             padding: 15px;
-            background-color: var(--header-color);
+            background: var(--header-color);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -94,7 +118,7 @@
         .logo {
             font-weight: bold;
             font-size: 18px;
-            color: var(--accent-color);
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -114,10 +138,13 @@
             position: relative;
         }
         
+        /* Animated Depth Buttons */
         .model-btn, .theme-btn {
-            background-color: var(--header-color);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 6px 12px;
             font-size: 14px;
@@ -125,7 +152,27 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .model-btn:before, .theme-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                            rgba(255,255,255,0.3) 0%, 
+                            rgba(255,255,255,0) 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .model-btn:hover:before, .theme-btn:hover:before {
+            opacity: 1;
         }
         
         .theme-btn {
@@ -136,19 +183,27 @@
         }
         
         .model-btn:hover, .theme-btn:hover {
-            border-color: var(--accent-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .model-btn:active, .theme-btn:active {
+            transform: translateY(0);
         }
         
         .model-dropdown, .theme-dropdown {
             position: absolute;
             right: 0;
             top: 40px;
-            background-color: var(--header-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             z-index: 100;
             display: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--glass-shadow);
             max-height: 70vh;
             overflow-y: auto;
         }
@@ -176,7 +231,7 @@
         }
         
         .model-option:hover {
-            background-color: var(--border-color);
+            background-color: rgba(255,255,255,0.1);
         }
         
         .model-option i {
@@ -192,7 +247,7 @@
         
         .model-option .model-desc {
             font-size: 11px;
-            color: var(--secondary-text);
+            color: var(--text-secondary);
             margin-top: 2px;
         }
         
@@ -200,8 +255,8 @@
             font-size: 10px;
             padding: 2px 6px;
             border-radius: 10px;
-            background-color: var(--border-color);
-            color: var(--text-color);
+            background-color: rgba(255,255,255,0.2);
+            color: var(--text-primary);
         }
         
         .theme-option {
@@ -214,14 +269,14 @@
         }
         
         .theme-option:hover {
-            background-color: var(--border-color);
+            background-color: rgba(255,255,255,0.1);
         }
         
         .theme-color {
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
         }
         
         .theme-name {
@@ -240,11 +295,16 @@
         .message {
             max-width: 85%;
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 18px;
             font-size: 15px;
             line-height: 1.6;
             position: relative;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
         
         .message.user-message {
@@ -256,16 +316,15 @@
         
         .message.ai-message {
             align-self: flex-start;
-            background-color: var(--ai-message-bg);
+            background: var(--ai-message-bg);
             border-bottom-left-radius: 4px;
-            border: 1px solid var(--border-color);
         }
         
         .message-title {
             font-weight: 600;
             font-size: 16px;
             margin-bottom: 8px;
-            color: var(--text-color);
+            color: var(--text-primary);
         }
         
         .message-content {
@@ -273,23 +332,23 @@
         }
         
         .message-content pre {
-            background-color: var(--bg-color);
+            background-color: rgba(0,0,0,0.2);
             border-radius: 8px;
             padding: 12px;
             overflow-x: auto;
             margin: 10px 0;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
         }
         
         .message-content code {
-            background-color: var(--bg-color);
+            background-color: rgba(0,0,0,0.2);
             padding: 2px 4px;
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
         }
         
         .message-footer {
@@ -301,11 +360,11 @@
         }
         
         .message-time {
-            color: var(--secondary-text);
+            color: var(--text-secondary);
         }
         
         .message-model {
-            color: var(--secondary-text);
+            color: var(--text-secondary);
             font-style: italic;
         }
         
@@ -315,7 +374,7 @@
         }
         
         .message-action {
-            color: var(--secondary-text);
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s;
             font-size: 14px;
@@ -325,11 +384,11 @@
         }
         
         .message-action:hover {
-            color: var(--accent-color);
+            color: var(--primary-color);
         }
         
         .message-action.active {
-            color: var(--accent-color);
+            color: var(--primary-color);
         }
         
         .image-container {
@@ -339,8 +398,8 @@
         
         .generated-image {
             max-width: 100%;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
         }
         
         .image-actions {
@@ -350,28 +409,33 @@
         }
         
         .image-action {
-            background-color: var(--header-color);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 4px 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 6px 12px;
             font-size: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
         
         .image-action:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
         }
         
         .input-area {
             padding: 15px;
-            background-color: var(--header-color);
-            border-top: 1px solid var(--border-color);
+            background: var(--header-color);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-top: 1px solid var(--glass-border);
             display: flex;
             gap: 10px;
             position: sticky;
@@ -385,21 +449,23 @@
         }
         
         #user-input {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 12px 15px;
-            color: var(--text-color);
+            color: var(--text-primary);
             font-size: 15px;
             resize: none;
             max-height: 120px;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
         
         #user-input:focus {
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
         }
         
         .file-upload {
@@ -411,7 +477,7 @@
         }
         
         .file-upload-label {
-            color: var(--secondary-text);
+            color: var(--text-secondary);
             font-size: 13px;
             cursor: pointer;
             display: flex;
@@ -420,7 +486,7 @@
         }
         
         .file-upload-label:hover {
-            color: var(--accent-color);
+            color: var(--primary-color);
         }
         
         .media-preview {
@@ -428,9 +494,9 @@
             position: relative;
             margin-top: 10px;
             max-width: 200px;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
         }
         
         .media-preview img {
@@ -460,11 +526,12 @@
             font-size: 12px;
         }
         
+        /* Animated Send Button */
         #send-btn {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background-color: var(--accent-color);
+            background-color: var(--primary-color);
             color: white;
             border: none;
             display: flex;
@@ -472,36 +539,63 @@
             justify-content: center;
             cursor: pointer;
             flex-shrink: 0;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #send-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                            rgba(255,255,255,0.3) 0%, 
+                            rgba(255,255,255,0) 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         #send-btn:hover {
-            background-color: var(--accent-color);
-            filter: brightness(0.9);
+            filter: brightness(1.1);
             transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+        }
+        
+        #send-btn:hover:before {
+            opacity: 1;
+        }
+        
+        #send-btn:active {
+            transform: scale(0.98);
         }
         
         #send-btn:disabled {
-            background-color: var(--border-color);
+            background-color: rgba(255,255,255,0.2);
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         
         .typing-indicator {
             align-self: flex-start;
-            background-color: var(--ai-message-bg);
+            background: var(--ai-message-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             padding: 12px 15px;
-            border-radius: 12px;
+            border-radius: 18px;
             border-bottom-left-radius: 4px;
             display: none;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
         }
         
         .typing-content {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--secondary-text);
+            color: var(--text-secondary);
         }
         
         .typing-dots {
@@ -512,7 +606,7 @@
         .typing-dots span {
             width: 8px;
             height: 8px;
-            background-color: var(--secondary-text);
+            background-color: var(--text-secondary);
             border-radius: 50%;
             animation: bounce 1s infinite;
         }
@@ -530,26 +624,13 @@
             50% { transform: translateY(-3px); }
         }
         
-        /* Slide to reply effect */
-        .message {
-            transition: transform 0.3s ease;
-        }
-        
-        .message.swipe-left {
-            transform: translateX(-50px);
-        }
-        
-        .message.swipe-right {
-            transform: translateX(50px);
-        }
-        
         /* Model tags */
         .tag-text {
             font-size: 10px;
             padding: 2px 6px;
             border-radius: 10px;
-            background-color: var(--border-color);
-            color: var(--text-color);
+            background-color: rgba(255,255,255,0.2);
+            color: var(--text-primary);
         }
         
         .tag-text.gpt {
@@ -587,6 +668,22 @@
             color: white;
         }
         
+        /* Motion-responsive elements */
+        @media (prefers-reduced-motion: no-preference) {
+            .message, .model-btn, .theme-btn, #send-btn {
+                will-change: transform;
+            }
+            
+            /* Tilt effect on mouse move */
+            body {
+                perspective: 1000px;
+            }
+            
+            .glass-panel {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
             .message {
@@ -607,7 +704,9 @@
         }
     </style>
 </head>
-<body class="default-theme">
+<body class="default-theme" data-theme="light">
+    <div class="dynamic-island">Marisel AI Pro</div>
+    
     <div class="header">
         <div class="logo">
             <i class="fas fa-robot"></i>
@@ -619,21 +718,13 @@
                     <i class="fas fa-palette"></i>
                 </button>
                 <div class="theme-dropdown" id="theme-dropdown">
-                    <div class="theme-option" data-theme="default">
-                        <div class="theme-color" style="background: linear-gradient(135deg, #0f172a 50%, #6366f1 50%);"></div>
-                        <span class="theme-name">Default</span>
-                    </div>
                     <div class="theme-option" data-theme="light">
-                        <div class="theme-color" style="background: linear-gradient(135deg, #f8fafc 50%, #6366f1 50%);"></div>
+                        <div class="theme-color" style="background: linear-gradient(135deg, #F5F7FA 50%, #0A84FF 50%);"></div>
                         <span class="theme-name">Light</span>
                     </div>
                     <div class="theme-option" data-theme="dark">
-                        <div class="theme-color" style="background: linear-gradient(135deg, #0f172a 50%, #818cf8 50%);"></div>
+                        <div class="theme-color" style="background: linear-gradient(135deg, #1C1C1E 50%, #5E9EFF 50%);"></div>
                         <span class="theme-name">Dark</span>
-                    </div>
-                    <div class="theme-option" data-theme="blue">
-                        <div class="theme-color" style="background: linear-gradient(135deg, #1a365d 50%, #4299e1 50%);"></div>
-                        <span class="theme-name">Blue</span>
                     </div>
                 </div>
             </div>
@@ -839,6 +930,7 @@
             const removeMedia = document.getElementById('remove-media');
             const themeBtn = document.getElementById('theme-btn');
             const themeDropdown = document.getElementById('theme-dropdown');
+            const dynamicIsland = document.querySelector('.dynamic-island');
             
             // Current model state
             let selectedModel = 'gpt4o';
@@ -851,6 +943,8 @@
                 e.stopPropagation();
                 modelDropdown.classList.toggle('show');
                 themeDropdown.classList.remove('show');
+                dynamicIsland.textContent = "Select Model";
+                dynamicIsland.style.width = "150px";
             });
             
             // Toggle theme dropdown
@@ -858,19 +952,28 @@
                 e.stopPropagation();
                 themeDropdown.classList.toggle('show');
                 modelDropdown.classList.remove('show');
+                dynamicIsland.textContent = "Select Theme";
+                dynamicIsland.style.width = "150px";
             });
             
             // Close dropdowns when clicking outside
             document.addEventListener('click', function() {
                 modelDropdown.classList.remove('show');
                 themeDropdown.classList.remove('show');
+                dynamicIsland.textContent = "Marisel AI Pro";
+                dynamicIsland.style.width = "120px";
             });
             
             // Theme selection
             document.querySelectorAll('.theme-option').forEach(option => {
                 option.addEventListener('click', function() {
-                    document.body.className = this.dataset.theme + '-theme';
+                    document.body.setAttribute('data-theme', this.dataset.theme);
                     themeDropdown.classList.remove('show');
+                    dynamicIsland.textContent = "Theme: " + this.querySelector('.theme-name').textContent;
+                    setTimeout(() => {
+                        dynamicIsland.textContent = "Marisel AI Pro";
+                        dynamicIsland.style.width = "120px";
+                    }, 1500);
                 });
             });
             
@@ -889,6 +992,12 @@
                     } else {
                         userInput.placeholder = "Type your message...";
                     }
+                    
+                    dynamicIsland.textContent = "Model: " + this.querySelector('.model-name').textContent;
+                    setTimeout(() => {
+                        dynamicIsland.textContent = "Marisel AI Pro";
+                        dynamicIsland.style.width = "120px";
+                    }, 1500);
                 });
             });
             
@@ -919,6 +1028,12 @@
                     }
                     
                     sendBtn.disabled = userInput.value.trim() === '' && !currentFile;
+                    
+                    dynamicIsland.textContent = "File Attached";
+                    setTimeout(() => {
+                        dynamicIsland.textContent = "Marisel AI Pro";
+                        dynamicIsland.style.width = "120px";
+                    }, 1500);
                 }
             });
             
@@ -928,6 +1043,12 @@
                 currentFile = null;
                 mediaPreview.style.display = 'none';
                 sendBtn.disabled = userInput.value.trim() === '';
+                
+                dynamicIsland.textContent = "File Removed";
+                setTimeout(() => {
+                    dynamicIsland.textContent = "Marisel AI Pro";
+                    dynamicIsland.style.width = "120px";
+                }, 1500);
             });
             
             // Get current time
@@ -1039,8 +1160,10 @@
                     fileDiv.style.alignItems = 'center';
                     fileDiv.style.gap = '8px';
                     fileDiv.style.padding = '8px';
-                    fileDiv.style.backgroundColor = 'var(--border-color)';
-                    fileDiv.style.borderRadius = '8px';
+                    background: var(--glass-bg);
+                    backdrop-filter: blur(5px);
+                    -webkit-backdrop-filter: blur(5px);
+                    fileDiv.style.borderRadius = '12px';
                     fileDiv.style.marginBottom = '10px';
                     
                     const icon = document.createElement('i');
@@ -1200,7 +1323,7 @@
                     notification.style.bottom = '80px';
                     notification.style.left = '50%';
                     notification.style.transform = 'translateX(-50%)';
-                    notification.style.backgroundColor = 'var(--accent-color)';
+                    notification.style.backgroundColor = 'var(--primary-color)';
                     notification.style.color = 'white';
                     notification.style.padding = '8px 16px';
                     notification.style.borderRadius = '20px';
@@ -1345,6 +1468,16 @@
             
             // Focus input on load
             userInput.focus();
+            
+            // Add motion-responsive tilt effect to glass panels
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                document.querySelectorAll('.glass-panel').forEach(panel => {
+                    panel.style.transform = `perspective(1000px) rotateX(${(y - 0.5) * 2}deg) rotateY(${(x - 0.5) * 2}deg)`;
+                });
+            });
         });
     </script>
 </body>
